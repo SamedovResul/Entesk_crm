@@ -127,7 +127,6 @@ export const calculateSalary = async (req, res) => {
       salaryInfo = lessons.map((item) => {
         return {};
       });
-     
     } else if (teacherId) {
       let currentDate = new Date();
       let firstDateOfMonth = new Date(
@@ -142,7 +141,7 @@ export const calculateSalary = async (req, res) => {
       );
       lastDateOfMonth.setHours(23, 59, 59, 999);
 
-      salaryİnfo = await Lesson.find({
+      salaryInfo = await Lesson.find({
         teacher: teacherId,
         date: {
           $gte: firstDateOfMonth,

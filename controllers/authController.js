@@ -66,7 +66,11 @@ export const registerStudent = async (req, res) => {
       { $addToSet: { students: student._id } }
     );
 
-    res.status(201).json(student);
+    const studentWithCourses = await Student.findById(student._id).populate(
+      "courses"
+    );
+
+    res.status(201).json(studentWithCourses);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -98,7 +102,10 @@ export const registerTeacher = async (req, res) => {
       { $addToSet: { teachers: teacher._id } }
     );
 
-    res.status(201).json(teacher);
+    const teacherWithCourses = await Teacher.findById(teacher._id).populate(
+      "courses"
+    );
+    res.status(201).json(teacherWithCourses);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -5,18 +5,18 @@ const Schema = mongoose.Schema;
 const teacherSchema = new Schema({
   fullName: {
     type: String,
-    require: true,
+    required: true,
   },
   email: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
   },
   password: {
     type: String,
-    require: true,
+    required: true,
   },
-  classes: [
+  courses: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
@@ -24,7 +24,7 @@ const teacherSchema = new Schema({
   ],
   salary: {
     type: Number,
-    require: true,
+    required: true,
   },
 });
 
