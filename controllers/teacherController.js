@@ -1,3 +1,4 @@
+import { Lesson } from "../models/lessonModel.js";
 import { Teacher } from "../models/teacherModel.js";
 import bcrypt from "bcrypt";
 
@@ -102,6 +103,53 @@ export const updateTeacherPassword = async (req, res) => {
     );
 
     res.status(200).json(updatedTeacher);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Calculate teacher salary
+
+export const calculateSalary = async (req, res) => {
+  const { teacherId, startDate, endDate } = req.query;
+
+  try {
+    let salaryInfo;
+    if (teacherId && startDate && endDate) {
+      const lessons = await Lesson.find({
+        teacher: teacherId,
+        date: {
+          $gte: startDate,
+          $lt: endDate,
+        },
+      });
+
+      salaryInfo = lessons.map((item) => {
+        return {};
+      });
+     
+    } else if (teacherId) {
+      let currentDate = new Date();
+      let firstDateOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+      let lastDateOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0
+      );
+      lastDateOfMonth.setHours(23, 59, 59, 999);
+
+      salaryİnfo = await Lesson.find({
+        teacher: teacherId,
+        date: {
+          $gte: firstDateOfMonth,
+          $lt: lastDateOfMonth,
+        },
+      });
+    }
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }

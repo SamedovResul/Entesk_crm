@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  changeForgottenPassword,
   login,
   registerAdmin,
   registerStudent,
@@ -13,5 +14,6 @@ router.post("/admin/sign", registerAdmin);
 router.post("/student/sign", authMiddleware, registerStudent);
 router.post("/teacher/sign", authMiddleware, registerTeacher);
 router.post("/login", login);
+router.post("/login/forget", changeForgottenPassword);
 
 export default router;

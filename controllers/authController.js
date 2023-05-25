@@ -4,6 +4,10 @@ import { Teacher } from "../models/teacherModel.js";
 import { Admin } from "../models/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Register admin
 export const registerAdmin = async (req, res) => {
@@ -134,3 +138,58 @@ export const login = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
+
+// Change forgotten password
+
+export const changeForgottenPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ email });
+    const student = await Student.findOne({ email });
+    const teacher = await Teacher.findOne({ email });
+
+    const user = admin || student || teacher;
+
+    if (!user) {
+      res.status(404).json({ message: "User is not found" });
+    }
+
+    let randomCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const mainEmail = process.env.EMAIL;
+    const password = process.env.PASS;
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: mainEmail,
+        pass: password,
+      },
+    });
+
+    const mailOptions = {
+      from: mainEmail,
+      to: "ceyhunresulov23@gmail.com",
+      subject: "Code to change password at edinfy",
+      text: randomCode,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        res.status(500).json({ error: error });
+      } else {
+        res
+          .status(200)
+          .json({ message: "Code sent successfuly", user: user.email });
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+console.log();

@@ -101,7 +101,10 @@ export const updateStudentPassword = async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json(updatedStudent);
+    const cleanedUpdatedStudent = updatedStudent.toObject();
+    delete cleanedUpdatedStudent.password;
+
+    res.status(200).json(cleanedUpdatedStudent);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }

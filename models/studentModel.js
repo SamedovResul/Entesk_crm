@@ -5,28 +5,32 @@ const Schema = mongoose.Schema;
 const studentSchema = new Schema({
   fullName: {
     type: String,
-    require: true,
+    required: true,
+  },
+  parentName: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
   },
   password: {
     type: String,
-    require: true,
+    required: true,
   },
   birthday: {
     type: Date,
-    require: true,
+    required: true,
   },
   phone: {
     type: String,
-    require: true,
+    required: true,
   },
   amount: {
     type: Number,
-    require: true,
+    required: true,
   },
   classes: [
     {
