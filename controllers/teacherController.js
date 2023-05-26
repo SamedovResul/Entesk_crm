@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 // Get teachers
 export const getTeachers = async (req, res) => {
   try {
-    const teachers = await Teacher.find();
+    const teachers = await Teacher.find().populate("courses");
     res.status(200).json(teachers);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
