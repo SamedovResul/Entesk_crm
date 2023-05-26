@@ -43,7 +43,7 @@ export const updateTeacher = async (req, res) => {
     const updatedTeacher = await Teacher.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
-    });
+    }).populate("courses");
 
     if (!updatedTeacher) {
       return res.status(404).json({ message: "Student not found" });
