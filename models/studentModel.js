@@ -38,6 +38,11 @@ const studentSchema = new Schema({
       ref: "Course",
     },
   ],
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
 });
 
 export const Student = mongoose.model("Student", studentSchema);

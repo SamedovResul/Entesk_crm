@@ -26,6 +26,11 @@ const teacherSchema = new Schema({
     type: Number,
     required: true,
   },
+  status: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
 });
 
 export const Teacher = mongoose.model("Teacher", teacherSchema);
