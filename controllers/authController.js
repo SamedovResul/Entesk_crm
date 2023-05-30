@@ -58,7 +58,11 @@ export const registerStudent = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-    const student = new Student({ ...req.body, password: hashedPassword });
+    const student = new Student({
+      ...req.body,
+      courses: coursesId,
+      password: hashedPassword,
+    });
     await student.save();
 
     await Course.updateMany(
