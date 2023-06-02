@@ -28,7 +28,6 @@ const teacherSchema = new Schema({
   },
   status: {
     type: Boolean,
-    required: true,
     default: true,
   },
 });
