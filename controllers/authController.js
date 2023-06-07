@@ -90,8 +90,9 @@ export const registerTeacher = async (req, res) => {
 
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
-        .status(400)
+        .status(409)
         .json({ message: "A user with the same email already exists" });
+      // .json({ key: "email-already-exists" });
     }
 
     const coursesId = req.body.courses;
@@ -151,7 +152,6 @@ export const login = async (req, res) => {
 };
 
 // Change forgotten password
-
 export const changeForgottenPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -163,7 +163,7 @@ export const changeForgottenPassword = async (req, res) => {
     const user = admin || student || teacher;
 
     if (!user) {
-      res.status(404).json({ message: "User is not found" });
+      res.status(404).json({ key: "User is not found" });
     }
 
     let randomCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -202,5 +202,3 @@ export const changeForgottenPassword = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
-console.log();

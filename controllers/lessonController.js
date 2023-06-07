@@ -30,6 +30,17 @@ export const getLesson = async (req, res) => {
   }
 };
 
+// Get lessons
+export const getLessons = async (req, res) => {
+  try {
+    const lessons = await Lesson.find();
+
+    res.status(200).json(lessons);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
 // Get weekly lessons
 export const getWeeklyLessons = async (req, res) => {
   const { startDate, endDate, teacherId, studentId } = req.body;
@@ -106,11 +117,11 @@ export const deleteLesson = async (req, res) => {
   try {
     const deletedLesson = await Lesson.findByIdAndDelete(id);
 
-    if (!deleteLesson) {
+    if (!deletedLesson) {
       res.status(404).json({ message: "Lesson not found" });
     }
 
-    res.status(200).json(deleteLesson);
+    res.status(200).json(deletedLesson);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
