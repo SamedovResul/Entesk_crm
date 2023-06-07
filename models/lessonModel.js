@@ -52,6 +52,10 @@ const lessonSchema = new Schema({
     type: Boolean,
     default: null,
   },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export const Lesson = mongoose.model("Lesson", lessonSchema);

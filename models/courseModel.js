@@ -16,6 +16,10 @@ const courseSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Teacher",
   },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export const Course = mongoose.model("Course", courseSchema);

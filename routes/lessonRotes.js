@@ -5,12 +5,13 @@ import {
   getLessons,
   updateLesson,
 } from "../controllers/lessonController.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getLessons);
-router.post("/", createLesson);
-router.patch("/:id", updateLesson);
-router.delete("/:id", deleteLesson);
+router.get("/", authMiddleware, getLessons);
+router.post("/", authMiddleware, createLesson);
+router.patch("/:id", authMiddleware, updateLesson);
+router.delete("/:id", authMiddleware, deleteLesson);
 
 export default router;

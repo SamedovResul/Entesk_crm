@@ -16,6 +16,10 @@ const adminSchema = new Schema({
     type: String,
     require: true,
   },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export const Admin = mongoose.model("Admin", adminSchema);

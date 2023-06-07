@@ -30,6 +30,10 @@ const teacherSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export const Teacher = mongoose.model("Teacher", teacherSchema);
