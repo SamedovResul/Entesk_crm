@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.get("/", authMiddleware, getStudents);
 router.get("/:id", authMiddleware, getStudent);
-router.get("/by-course", authMiddleware, getStudentsByCourseId);
+router.get("/by/course", getStudentsByCourseId);
 router.patch("/:id", authMiddleware, updateStudent);
 router.delete("/:id", authMiddleware, deleteStudent);
 router.patch("/me/password", authMiddleware, updateStudentPassword);
