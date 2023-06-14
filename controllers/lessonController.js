@@ -91,28 +91,6 @@ export const getCurrentWeeklyLessons = async (req, res) => {
   }
 };
 
-// test date
-
-const now = new Date(); // Cari zamanı al
-
-// Haftanın başlangıcını hesapla
-const startOfWeek = new Date(now);
-startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // Haftanın ilk gününe git (Pazartesi gününden önceki gün)
-startOfWeek.setHours(0, 0, 0, 0); // Saat, dakika, saniye ve milisaniyey
-
-// Haftanın sonunu hesapla
-const endOfWeek = new Date(now);
-endOfWeek.setDate(now.getDate() - now.getDay() + 6); // Haftanın son gününe git (Cumartesi günü)
-endOfWeek.setHours(23, 59, 59, 999); // Saati son güne ayarla
-
-const currentDate = now.toLocaleString();
-const startOfWeekLocal = startOfWeek.toLocaleString();
-const endOfWeekLocal = endOfWeek.toLocaleString();
-
-console.log(now);
-console.log(currentDate);
-console.log(startOfWeekLocal);
-console.log(endOfWeekLocal);
 
 // Update lesson
 export const updateLesson = async (req, res) => {
