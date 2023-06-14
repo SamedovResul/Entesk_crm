@@ -2,8 +2,15 @@ import { Lesson } from "../models/lessonModel.js";
 
 // Create lesson
 export const createLesson = async (req, res) => {
+  const { date } = req.body;
   try {
-    const newLesson = new Lesson(req.body);
+    let newLesson;
+
+    if (date) {
+      newLesson = new Lesson({ role: "current", ...req.body });
+    } else {
+      newLesson = new Lesson({ role: "main", ...req.body });
+    }
 
     await newLesson.save();
 
@@ -90,7 +97,6 @@ export const getCurrentWeeklyLessons = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
 
 // Update lesson
 export const updateLesson = async (req, res) => {

@@ -27,8 +27,8 @@ export const getStudent = async (req, res) => {
   }
 };
 
-// Get student by course id
-export const getStudentByCourseId = async (req, res) => {
+// Get students by course id
+export const getStudentsByCourseId = async (req, res) => {
   const { courseId } = req.query;
 
   try {

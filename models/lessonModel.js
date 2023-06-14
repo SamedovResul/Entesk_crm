@@ -3,6 +3,11 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const lessonSchema = new Schema({
+  role: {
+    type: String,
+    required: true,
+    enum: ["main", "current"],
+  },
   date: {
     type: Date,
     required: function () {
@@ -15,9 +20,7 @@ const lessonSchema = new Schema({
   },
   day: {
     type: String,
-    required: function () {
-      return this.role === "main";
-    },
+    required: true,
   },
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
