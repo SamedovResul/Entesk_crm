@@ -9,7 +9,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import lessonRoutes from "./routes/lessonRotes.js";
-// import cron from "node-cron";
+import cron from "node-cron";
 
 dotenv.config();
 
@@ -30,11 +30,9 @@ app.get("/", (req, res) => {
   res.send("salam");
 });
 
-// cron
-//   .schedule("* * * * *", () => {
-//     console.log("salam cron");
-//   })
-//   .start();
+// cron.schedule("* * * * * *", () => {
+//   console.log("salam cron");
+// });
 
 mongoose
   .connect(uri)

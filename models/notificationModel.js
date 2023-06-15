@@ -3,6 +3,10 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema({
+  role: {
+    type:String,
+    enum: ["birthday","count", "update"]
+  },
   student: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Student",
