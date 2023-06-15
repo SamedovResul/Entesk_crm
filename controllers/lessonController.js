@@ -5,7 +5,7 @@ export const createLesson = async (req, res) => {
   try {
     const newLesson = new Lesson(req.body);
 
-    await newLesson.populate("teacher course studetns.student");
+    await newLesson.populate("teacher course students.student");
 
     await newLesson.save();
 
@@ -36,7 +36,7 @@ export const getLesson = async (req, res) => {
 export const getLessons = async (req, res) => {
   try {
     const lessons = await Lesson.find().populate(
-      "teacher course studetns.student"
+      "teacher course students.student"
     );
 
     res.status(200).json(lessons);
