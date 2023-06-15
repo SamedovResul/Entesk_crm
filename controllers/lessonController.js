@@ -2,15 +2,10 @@ import { Lesson } from "../models/lessonModel.js";
 
 // Create lesson
 export const createLesson = async (req, res) => {
-  const { date } = req.body;
   try {
-    let newLesson;
+    const newLesson = new Lesson(req.body);
 
-    if (date) {
-      newLesson = new Lesson({ role: "current", ...req.body });
-    } else {
-      newLesson = new Lesson({ role: "main", ...req.body });
-    }
+    await newLesson.populate("teacher course studetns.student");
 
     await newLesson.save();
 

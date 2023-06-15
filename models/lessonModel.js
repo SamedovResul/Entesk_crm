@@ -19,7 +19,7 @@ const lessonSchema = new Schema({
     required: true,
   },
   day: {
-    type: String,
+    type: Number,
     required: true,
   },
   teacher: {
@@ -30,7 +30,7 @@ const lessonSchema = new Schema({
   students: {
     type: [
       {
-        studentId: {
+        student: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
         },
@@ -45,10 +45,6 @@ const lessonSchema = new Schema({
   course: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Course",
-    required: true,
-  },
-  role: {
-    type: String,
     required: true,
   },
   confirmed: {

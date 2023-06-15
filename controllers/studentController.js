@@ -1,3 +1,4 @@
+import { Lesson } from "../models/lessonModel.js";
 import { Student } from "../models/studentModel.js";
 import bcrypt from "bcrypt";
 
@@ -29,12 +30,42 @@ export const getStudent = async (req, res) => {
 
 // Get students by course id
 export const getStudentsByCourseId = async (req, res) => {
-  const { courseId } = req.query;
-
+  const { courseId, day, time, role, date } = req.query;
+  console.log(day, time, role);
   try {
     const students = await Student.find({ courses: courseId });
 
-    res.status(200).json(students);
+    const newStudents = await Promise.all(
+      students.map(async (student) => {
+        let checkStudent;
+
+        if (role === "main") {
+          console.log(student._id, day, time, role);
+          checkStudent = await Lesson.find({
+            "students.studentId": student._id,
+            day,
+            time,
+            role,
+          });
+        } else if (role === "current") {
+          checkStudent = await Lesson.find({
+            "students.studentId": student._id,
+            day,
+            time,
+            role,
+            date,
+          });
+        }
+
+        if (checkStudent) {
+          return { ...student.toObject(), disable: true };
+        } else {
+          return { ...student.toObject(), disable: false };
+        }
+      })
+    );
+
+    res.status(200).json(newStudents);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
