@@ -1,13 +1,19 @@
 import { Lesson } from "../models/lessonModel.js";
+import { createNotificationForUpdate } from "./notificationController.js";
 
 // Create lesson
 export const createLesson = async (req, res) => {
+  const { role, teacher, students } = req.body;
   try {
     const newLesson = new Lesson(req.body);
 
     await newLesson.populate("teacher course students.student");
 
     await newLesson.save();
+
+    if (role === "current") {
+      createNotificationForUpdate(teacher, students.student);
+    }
 
     res.status(201).json(newLesson);
   } catch (err) {
@@ -123,6 +129,10 @@ export const deleteLesson = async (req, res) => {
 
     if (!deletedLesson) {
       res.status(404).json({ message: "Lesson not found" });
+    }
+
+    if (deletedLesson.role === "current") {
+      createNotificationForUpdate(deletedLesson.teacher, students.student);
     }
 
     res.status(200).json(deletedLesson);

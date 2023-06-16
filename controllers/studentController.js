@@ -40,20 +40,19 @@ export const getStudentsByCourseId = async (req, res) => {
         let checkStudent;
 
         if (role === "main") {
-          console.log(student._id, day, time, role);
           checkStudent = await Lesson.find({
             "students.studentId": student._id,
-            day,
-            time,
-            role,
+            day: day,
+            time: time,
+            role: role,
           });
         } else if (role === "current") {
           checkStudent = await Lesson.find({
             "students.studentId": student._id,
-            day,
-            time,
-            role,
-            date,
+            day: day,
+            time: time,
+            role: role,
+            date: date,
           });
         }
 

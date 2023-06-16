@@ -47,9 +47,10 @@ const lessonSchema = new Schema({
     ref: "Course",
     required: true,
   },
-  confirmed: {
+  status: {
     type: Boolean,
-    default: null,
+    enum: ["unviewed", "confirmed", "canceled"],
+    default: "unviewed",
   },
   createdDate: {
     type: Date,

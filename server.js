@@ -10,6 +10,7 @@ import courseRoutes from "./routes/courseRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import lessonRoutes from "./routes/lessonRotes.js";
 import cron from "node-cron";
+import { createNotificationForBirthday } from "./controllers/notificationController.js";
 
 dotenv.config();
 
@@ -30,16 +31,17 @@ app.get("/", (req, res) => {
   res.send("salam");
 });
 
-// cron.schedule("* * * * * *", () => {
-//   console.log("salam cron");
-// });
-
 mongoose
   .connect(uri)
   .then(() => {
     console.log("connected database");
     app.listen(port, () => {
       console.log(`listen server at ${port}`);
+      cron.schedule("0 9 * * *", () => {
+        console.log("salam");
+        createNotificationForBirthday();
+      });
     });
   })
   .catch((err) => console.log(err));
+// "0 9 * * *"
