@@ -17,7 +17,7 @@ export const registerAdmin = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
     const adminCount = await Admin.countDocuments();
 
-    console.log(existingStudent);
+  
     if (existingStudent || existingTeacher) {
       return res
         .status(400)
