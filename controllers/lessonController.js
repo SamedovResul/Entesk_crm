@@ -3,7 +3,7 @@ import { createNotificationForUpdate } from "./notificationController.js";
 
 // Create lesson
 export const createLesson = async (req, res) => {
-  const { role, teacher, students } = req.body;
+  const { role } = req.user;
   try {
     const newLesson = new Lesson(req.body);
 
@@ -11,8 +11,8 @@ export const createLesson = async (req, res) => {
 
     await newLesson.save();
 
-    if (role === "current") {
-      createNotificationForUpdate(teacher, students.student);
+    if (newLesson.role === "current" && role === "admin") {
+      createNotificationForUpdate(newLesson.teacher._id, newLesson.students);
     }
 
     res.status(201).json(newLesson);
@@ -104,6 +104,7 @@ export const getCurrentWeeklyLessons = async (req, res) => {
 // Update lesson
 export const updateLesson = async (req, res) => {
   const { id } = req.params;
+  const { role } = req.user;
 
   try {
     const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body, {
@@ -114,6 +115,12 @@ export const updateLesson = async (req, res) => {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
+    if (updatedLesson.role === "current" && role === "admin") {
+      createNotificationForUpdate(
+        updatedLesson.teacher._id,
+        updatedLesson.students
+      );
+    }
     res.status(200).json(updatedLesson);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });

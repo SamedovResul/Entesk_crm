@@ -30,6 +30,10 @@ const teacherSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  role: {
+    type: String,
+    default: "teacher",
+  },
   createdDate: {
     type: Date,
     default: Date.now,

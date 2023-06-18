@@ -116,6 +116,7 @@ export const deleteStudent = async (req, res) => {
 };
 
 // Update student password
+
 export const updateStudentPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const { id } = req.user;

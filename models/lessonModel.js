@@ -35,8 +35,8 @@ const lessonSchema = new Schema({
           ref: "Student",
         },
         attendance: {
-          type: Boolean,
-          default: null,
+          type: Number,
+          default: 0,
         },
       },
     ],

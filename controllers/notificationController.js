@@ -34,7 +34,7 @@ export const createNotificationForBirthday = async () => {
 };
 
 // Create notification for update table
-export const createNotificationForUpdate = async (teacherId, studentIds) => {
+export const createNotificationForUpdate = async (teacherId, students) => {
   try {
     await Notification.create({
       role: "update-teacher-table",
@@ -42,10 +42,10 @@ export const createNotificationForUpdate = async (teacherId, studentIds) => {
       isUpdatedTable: true,
     });
 
-    studentIds.map(async (studentId) => {
+    students.map(async (item) => {
       await Notification.create({
         role: "update-student-table",
-        student: studentId,
+        student: item.student._id,
         isUpdatedTable: true,
       });
     });

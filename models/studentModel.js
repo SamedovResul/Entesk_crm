@@ -28,6 +28,10 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    default: "student",
+  },
   amount: {
     type: Number,
     required: true,
