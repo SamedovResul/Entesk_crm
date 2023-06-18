@@ -58,10 +58,8 @@ export const createNotificationForUpdate = async (teacherId, students) => {
 
 // Get notifications for admin
 export const getNotificationsForAdmin = async (req, res) => {
-  const { studentId } = req.query;
   try {
     const notifications = await Notification.find({
-      student: studentId,
       role: { $in: ["birhtday", "count"] },
     });
 

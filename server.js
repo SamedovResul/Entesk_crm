@@ -9,6 +9,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import lessonRoutes from "./routes/lessonRotes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 import cron from "node-cron";
 import { createNotificationForBirthday } from "./controllers/notificationController.js";
 
@@ -26,6 +27,7 @@ app.use("/api/user/teacher", teacherRoutes);
 app.use("/api/user/admin", adminRoutes);
 app.use("/api/course", courseRoutes);
 app.use("/api/lesson", lessonRoutes);
+app.use("/api/notification", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("salam");
@@ -38,10 +40,8 @@ mongoose
     app.listen(port, () => {
       console.log(`listen server at ${port}`);
       cron.schedule("0 9 * * *", () => {
-        console.log("salam");
         createNotificationForBirthday();
       });
     });
   })
   .catch((err) => console.log(err));
-// "0 9 * * *"
