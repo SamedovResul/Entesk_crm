@@ -31,7 +31,7 @@ export const getStudent = async (req, res) => {
 // Get students by course id
 export const getStudentsByCourseId = async (req, res) => {
   const { courseId, day, time, role, date } = req.query;
-  console.log(day, time, role);
+
   try {
     const students = await Student.find({ courses: courseId });
 
@@ -56,7 +56,7 @@ export const getStudentsByCourseId = async (req, res) => {
           });
         }
 
-        if (checkStudent) {
+        if (checkStudent[0]) {
           return { ...student.toObject(), disable: true };
         } else {
           return { ...student.toObject(), disable: false };

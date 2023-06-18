@@ -54,6 +54,8 @@ export const createNotificationForUpdate = async (teacherId, students) => {
   }
 };
 
+// 
+
 // GET NOTIFICATIONS
 
 // Get notifications for admin
