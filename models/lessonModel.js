@@ -48,7 +48,7 @@ const lessonSchema = new Schema({
     required: true,
   },
   status: {
-    type: Boolean,
+    type: String,
     enum: ["unviewed", "confirmed", "canceled"],
     default: "unviewed",
   },

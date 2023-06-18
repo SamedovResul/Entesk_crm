@@ -4,6 +4,7 @@ import { createNotificationForUpdate } from "./notificationController.js";
 // Create lesson
 export const createLesson = async (req, res) => {
   const { role } = req.user;
+
   try {
     const newLesson = new Lesson(req.body);
 

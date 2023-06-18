@@ -54,7 +54,15 @@ export const createNotificationForUpdate = async (teacherId, students) => {
   }
 };
 
-// 
+// Create notification for lesson count
+const createNotificationForLessonCount = async (req,res)=>{
+
+  try{
+    
+  }catch(err){
+    console.log(err)
+  }
+}
 
 // GET NOTIFICATIONS
 
