@@ -1,4 +1,3 @@
-import { Salary } from "../models/salaryModel";
 
 // Create salary -- called in authController.js
 export const createSalary = async (teacher) => {

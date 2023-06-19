@@ -55,7 +55,7 @@ export const getStudentsByCourseId = async (req, res) => {
             date: date,
           });
         }
-
+        console.log(checkStudent);
         if (checkStudent[0]) {
           return { ...student.toObject(), disable: true };
         } else {
