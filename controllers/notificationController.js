@@ -20,7 +20,7 @@ export const createNotificationForBirthday = async () => {
       },
       status: true,
     });
-    console.log(birthdayStudents);
+
     birthdayStudents.map(async (student) => {
       await Notification.create({
         role: "birthday",
@@ -55,14 +55,12 @@ export const createNotificationForUpdate = async (teacherId, students) => {
 };
 
 // Create notification for lesson count
-const createNotificationForLessonCount = async (req,res)=>{
-
-  try{
-    
-  }catch(err){
-    console.log(err)
+const createNotificationForLessonCount = async (req, res) => {
+  try {
+  } catch (err) {
+    console.log(err);
   }
-}
+};
 
 // GET NOTIFICATIONS
 
@@ -71,9 +69,8 @@ export const getNotificationsForAdmin = async (req, res) => {
   try {
     const notifications = await Notification.find({
       role: { $in: ["birthday", "count"] },
-    });
+    }).populate("student");
 
-    console.log(notifications);
     res.status(200).json(notifications);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });

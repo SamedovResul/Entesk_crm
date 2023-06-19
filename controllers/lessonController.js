@@ -110,7 +110,7 @@ export const updateLesson = async (req, res) => {
   try {
     const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body, {
       new: true,
-    }).populate("teacher course studetns.student");
+    }).populate("teacher course students.student");
 
     if (!updatedLesson) {
       return res.status(404).json({ message: "Lesson not found" });
