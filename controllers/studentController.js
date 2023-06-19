@@ -41,14 +41,14 @@ export const getStudentsByCourseId = async (req, res) => {
 
         if (role === "main") {
           checkStudent = await Lesson.find({
-            "students.studentId": student._id,
+            "students.student": student._id,
             day: day,
             time: time,
             role: role,
           });
         } else if (role === "current") {
           checkStudent = await Lesson.find({
-            "students.studentId": student._id,
+            "students.student": student._id,
             day: day,
             time: time,
             role: role,

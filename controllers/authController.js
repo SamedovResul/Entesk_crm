@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { createSalary } from "./salaryController.js";
 
 dotenv.config();
 
@@ -17,7 +18,6 @@ export const registerAdmin = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
     const adminCount = await Admin.countDocuments();
 
-  
     if (existingStudent || existingTeacher) {
       return res
         .status(400)
@@ -100,6 +100,7 @@ export const registerTeacher = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const teacher = new Teacher({ ...req.body, password: hashedPassword });
+    await teacher.populate("courses");
     await teacher.save();
 
     await Course.updateMany(
@@ -107,10 +108,9 @@ export const registerTeacher = async (req, res) => {
       { $addToSet: { teachers: teacher._id } }
     );
 
-    const teacherWithCourses = await Teacher.findById(teacher._id).populate(
-      "courses"
-    );
-    res.status(201).json(teacherWithCourses);
+    createSalary(teacher);
+
+    res.status(201).json(teacher);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
