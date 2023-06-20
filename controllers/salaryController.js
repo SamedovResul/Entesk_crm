@@ -1,9 +1,11 @@
 import { Lesson } from "../models/lessonModel.js";
 import { Teacher } from "../models/teacherModel.js";
-// Get salary
+// Get salaries
 
 const getSalaries = async (req, res) => {
   const { teacherId, startDate, endDate } = req.query;
+
+  console.log();
 
   const filterObj = {
     status: "confirmed",
@@ -34,11 +36,6 @@ const getSalaries = async (req, res) => {
       const teacherLessons = lessons.filter(
         (lesson) => lesson.teacher == teacher._id
       );
-
-      return {
-        teacher,
-        confirmed: 
-      }
     });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
