@@ -6,7 +6,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { createSalary } from "./salaryController.js";
 
 dotenv.config();
 
@@ -107,8 +106,6 @@ export const registerTeacher = async (req, res) => {
       { _id: { $in: coursesId } },
       { $addToSet: { teachers: teacher._id } }
     );
-
-    createSalary(teacher);
 
     res.status(201).json(teacher);
   } catch (error) {
