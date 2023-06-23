@@ -69,6 +69,8 @@ export const getSalaries = async (req, res) => {
         total: total,
       };
     });
+
+    res.status(200).json(response);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
