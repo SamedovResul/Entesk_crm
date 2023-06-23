@@ -15,6 +15,6 @@ router.get("/", authMiddleware, getTeachers);
 router.get("/:id", authMiddleware, getTeacher);
 router.patch("/:id", authMiddleware, updateTeacher);
 router.delete("/:id", authMiddleware, deleteTeacher);
-router.patch("/password", authMiddleware, updateTeacherPassword);
+router.patch("/me/password", authMiddleware, updateTeacherPassword);
 
 export default router;

@@ -5,15 +5,13 @@ import { Teacher } from "../models/teacherModel.js";
 const getSalaries = async (req, res) => {
   const { teacherId, startDate, endDate } = req.query;
 
-  console.log();
-
   const filterObj = {
-    status: "confirmed",
+    status: { $ne: "unviewed" },
     role: "current",
   };
 
   if (teacherId) {
-    filterObj.teacherId = teacherId;
+    filterObj.teacher = teacherId;
   }
   if (startDate && endDate) {
     filterObj.date = {
@@ -36,6 +34,31 @@ const getSalaries = async (req, res) => {
       const teacherLessons = lessons.filter(
         (lesson) => lesson.teacher == teacher._id
       );
+
+      const confirmed = teacherLessons.filter(
+        (lesson) => lesson.status === "confirmed"
+      );
+
+      const canceled = teacherLessons.filter(
+        (lesson) => lesson.status === "canceled"
+      );
+
+      const participantCount = confirmed.reduce(
+        (total, current) =>
+          (total += current.students.filter(
+            (item) => item.attended === 1
+          ).length),
+        0
+      );
+
+      return {
+        teacher,
+        confirmed: confirmed.length,
+        canceled: canceled.length,
+        participantCount,
+        salary: confirmed[confirmed.length-1].lesson.salary
+        
+      };
     });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });

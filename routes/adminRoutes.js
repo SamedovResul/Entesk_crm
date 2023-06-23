@@ -8,6 +8,6 @@ import { authMiddleware } from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", authMiddleware, getAdmin);
-router.patch("/password", authMiddleware, updateAdminPassword);
+router.patch("/me/password", authMiddleware, updateAdminPassword);
 
 export default router;

@@ -1,5 +1,8 @@
 import { Lesson } from "../models/lessonModel.js";
-import { createNotificationForUpdate } from "./notificationController.js";
+import {
+  createNotificationForLessonsCount,
+  createNotificationForUpdate,
+} from "./notificationController.js";
 
 // Create lesson
 export const createLesson = async (req, res) => {
@@ -108,6 +111,7 @@ export const updateLesson = async (req, res) => {
   const { role } = req.user;
 
   try {
+    const lesson = await Lesson.findById(id);
     const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body, {
       new: true,
     }).populate("teacher course students.student");
@@ -121,6 +125,14 @@ export const updateLesson = async (req, res) => {
         updatedLesson.teacher._id,
         updatedLesson.students
       );
+    }
+
+    if (
+      role === "admin" &&
+      req.body.status === "confirmed" &&
+      lesson.status !== "confirmed"
+    ) {
+      createNotificationForLessonsCount(updatedLesson);
     }
     res.status(200).json(updatedLesson);
   } catch (err) {
@@ -151,8 +163,12 @@ export const deleteLesson = async (req, res) => {
 
 // Create current table
 export const copyMainTableToCurrentTable = async () => {
+  const { teacherId } = req.body;
   try {
-    const mainTableData = await Lesson.find({ role: "main" });
+    const mainTableData = await Lesson.find({
+      role: "main",
+      teacher: teacherId,
+    });
 
     const currentWeekStart = new Date();
 

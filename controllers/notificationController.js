@@ -55,8 +55,11 @@ export const createNotificationForUpdate = async (teacherId, students) => {
 };
 
 // Create notification for lesson count
-const createNotificationForLessonCount = async (req, res) => {
+export const createNotificationForLessonsCount = async (lesson) => {
   try {
+    const completedCourseStudents = lesson.students.filter(
+      (item) => item.student.amount === 0
+    );
   } catch (err) {
     console.log(err);
   }
