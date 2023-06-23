@@ -1,8 +1,9 @@
 import { Lesson } from "../models/lessonModel.js";
 import { Teacher } from "../models/teacherModel.js";
+
 // Get salaries
 
-const getSalaries = async (req, res) => {
+export const getSalaries = async (req, res) => {
   const { teacherId, startDate, endDate } = req.query;
 
   const filterObj = {
@@ -51,13 +52,21 @@ const getSalaries = async (req, res) => {
         0
       );
 
+      const total = confirmed.reduce(
+        (total, current) =>
+          (total +=
+            current.students.filter((item) => item.attended === 1).length *
+            current.salary),
+        0
+      );
+
       return {
         teacher,
         confirmed: confirmed.length,
         canceled: canceled.length,
         participantCount,
-        salary: confirmed[confirmed.length-1].lesson.salary
-        
+        salary: teacher.salary,
+        total: total,
       };
     });
   } catch (err) {

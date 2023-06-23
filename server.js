@@ -10,8 +10,10 @@ import courseRoutes from "./routes/courseRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import lessonRoutes from "./routes/lessonRotes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
-import cron from "node-cron";
+import salaryRoutes from "./routes/salaryRoutes.js";
 import { createNotificationForBirthday } from "./controllers/notificationController.js";
+
+import cron from "node-cron";
 
 dotenv.config();
 
@@ -28,6 +30,7 @@ app.use("/api/user/admin", adminRoutes);
 app.use("/api/course", courseRoutes);
 app.use("/api/lesson", lessonRoutes);
 app.use("/api/notification", notificationRoutes);
+app.use("/api/salary", salaryRoutes);
 
 app.get("/", (req, res) => {
   res.send("salam");
