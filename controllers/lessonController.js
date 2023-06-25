@@ -25,29 +25,44 @@ export const createLesson = async (req, res) => {
   }
 };
 
+// ----------------------------------------------------------------------
 // Get lesson
-export const getLesson = async (req, res) => {
-  const { id } = req.params;
+// export const getLesson = async (req, res) => {
+//   const { id } = req.params;
 
-  try {
-    const lesson = await Lesson.findById(id);
+//   try {
+//     const lesson = await Lesson.findById(id);
 
-    if (!lesson) {
-      res.status(404).json({ message: "Lesson not found" });
-    }
+//     if (!lesson) {
+//       res.status(404).json({ message: "Lesson not found" });
+//     }
 
-    res.status(200).json(lesson);
-  } catch (err) {
-    res.status(500).json({ message: { error: err.message } });
-  }
-};
+//     res.status(200).json(lesson);
+//   } catch (err) {
+//     res.status(500).json({ message: { error: err.message } });
+//   }
+// };
 
 // Get lessons
-export const getLessons = async (req, res) => {
+// export const getLessons = async (req, res) => {
+//   try {
+//     const lessons = await Lesson.find().populate(
+//       "teacher course students.student"
+//     );
+
+//     res.status(200).json(lessons);
+//   } catch (err) {
+//     res.status(500).json({ message: { error: err.message } });
+//   }
+// };
+// ------------------------------------------------------------------------------------
+
+// Get weekly lessons for main table
+export const getWeeklyLessonsForMainTable = async (req, res) => {
+  const { teacherId } = req.query;
+
   try {
-    const lessons = await Lesson.find().populate(
-      "teacher course students.student"
-    );
+    const lessons = await Lesson.find({ teacher: teacherId, role: "main" });
 
     res.status(200).json(lessons);
   } catch (err) {
@@ -55,29 +70,57 @@ export const getLessons = async (req, res) => {
   }
 };
 
-// Get weekly lessons
-export const getWeeklyLessons = async (req, res) => {
-  const { startDate, endDate, teacherId, studentId } = req.body;
+// Get weekly lessons for current table
+export const getWeeklyLessonsForCurrentTable = async (req, res) => {
+  const { teacherId } = req.query;
+  const currentDate = new Date();
+  const startWeek = new Date(
+    currentDate.setDate(currentDate.getDate() - currentDate.getDay())
+  );
+  const endWeek = new Date(startWeek.setDate(startWeek.getDate() + 6));
 
   try {
-    let lessons;
+    const lessons = await Lesson.find({
+      teacher: teacherId,
+      role: "current",
+      date: {
+        $gte: startWeek,
+        $lte: endWeek,
+      },
+    });
+
+    res.status(200).json(lessons);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Get weekly lessons for admin main panel
+export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
+  const { startDate, endDate, teacherId, studentId, status } = req.query;
+
+  try {
+    const filterObj = {
+      role: "current",
+    };
+
     if (teacherId) {
-      lessons = await CurrentTable.find({
-        date: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
-        },
-        teacher: teacherId,
-      });
+      filterObj.teacher = teacherId;
     } else if (studentId) {
-      lessons = await CurrentTable.find({
-        date: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
-        },
-        students: studentId,
-      });
+      filterObj.student = studentId;
     }
+
+    if (startDate && endDate) {
+      filterObj.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+    if (status === "confirmed" || status === "canceled") {
+      filterObj.status = status;
+    }
+
+    const lessons = await Lesson.find(filterObj);
 
     res.status(200).json(lessons);
   } catch (err) {
@@ -88,7 +131,7 @@ export const getWeeklyLessons = async (req, res) => {
 // Get current weekly lessons
 
 export const getCurrentWeeklyLessons = async (req, res) => {
-  const { id } = req.params;
+  const { teacherId } = req.query;
 
   try {
     let lessons = await Lesson.find({
@@ -96,7 +139,7 @@ export const getCurrentWeeklyLessons = async (req, res) => {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
       },
-      teacher: id,
+      teacher: teacherId,
     });
 
     res.status(200).json(lessons);
