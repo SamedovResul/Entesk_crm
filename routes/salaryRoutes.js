@@ -1,7 +1,6 @@
 import express from "express";
-import router from "./studentRoutes";
-import { authMiddleware } from "../middleware/auth";
-import { getSalaries } from "../controllers/salaryController";
+import { authMiddleware } from "../middleware/auth.js";
+import { getSalaries } from "../controllers/salaryController.js";
 
 const router = express.Router();
 
