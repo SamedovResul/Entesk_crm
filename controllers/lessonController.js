@@ -62,7 +62,7 @@ export const getWeeklyLessonsForMainTable = async (req, res) => {
   const { teacherId } = req.query;
 
   try {
-    if (!teacherId) {
+    if (teacherId === "undefined") {
       return res.status(200).json([]);
     }
 
@@ -87,7 +87,7 @@ export const getWeeklyLessonsForCurrentTable = async (req, res) => {
   const endWeek = new Date(startWeek.setDate(startWeek.getDate() + 6));
 
   try {
-    if (!teacherId) {
+    if (teacherId === "undefined") {
       return res.status(200).json([]);
     }
 
