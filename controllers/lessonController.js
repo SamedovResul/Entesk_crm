@@ -62,7 +62,10 @@ export const getWeeklyLessonsForMainTable = async (req, res) => {
   const { teacherId } = req.query;
 
   try {
-    const lessons = await Lesson.find({ teacher: teacherId, role: "main" });
+    const lessons = await Lesson.find({
+      teacher: teacherId,
+      role: "main",
+    }).populate("teacher course students.student");
 
     res.status(200).json(lessons);
   } catch (err) {
@@ -87,7 +90,7 @@ export const getWeeklyLessonsForCurrentTable = async (req, res) => {
         $gte: startWeek,
         $lte: endWeek,
       },
-    });
+    }).populate("teacher course students.student");
 
     res.status(200).json(lessons);
   } catch (err) {
@@ -120,27 +123,9 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
       filterObj.status = status;
     }
 
-    const lessons = await Lesson.find(filterObj);
-
-    res.status(200).json(lessons);
-  } catch (err) {
-    res.status(500).json({ message: { error: err.message } });
-  }
-};
-
-// Get current weekly lessons
-
-export const getCurrentWeeklyLessons = async (req, res) => {
-  const { teacherId } = req.query;
-
-  try {
-    let lessons = await Lesson.find({
-      date: {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate),
-      },
-      teacher: teacherId,
-    });
+    const lessons = await Lesson.find(filterObj).populate(
+      "teacher course students.student"
+    );
 
     res.status(200).json(lessons);
   } catch (err) {
