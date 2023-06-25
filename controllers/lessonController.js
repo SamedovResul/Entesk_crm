@@ -62,6 +62,10 @@ export const getWeeklyLessonsForMainTable = async (req, res) => {
   const { teacherId } = req.query;
 
   try {
+    if (!teacherId) {
+      return res.status(200).json([]);
+    }
+
     const lessons = await Lesson.find({
       teacher: teacherId,
       role: "main",
@@ -83,6 +87,10 @@ export const getWeeklyLessonsForCurrentTable = async (req, res) => {
   const endWeek = new Date(startWeek.setDate(startWeek.getDate() + 6));
 
   try {
+    if (!teacherId) {
+      return res.status(200).json([]);
+    }
+
     const lessons = await Lesson.find({
       teacher: teacherId,
       role: "current",
