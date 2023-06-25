@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  createCurrentLessonsFromMainLessons,
   createLesson,
   deleteLesson,
   getWeeklyLessonsForCurrentTable,
@@ -13,6 +14,11 @@ const router = express.Router();
 router.get("/main", authMiddleware, getWeeklyLessonsForMainTable);
 router.get("/current", authMiddleware, getWeeklyLessonsForCurrentTable);
 router.post("/", authMiddleware, createLesson);
+router.post(
+  "/current/all",
+  authMiddleware,
+  createCurrentLessonsFromMainLessons
+);
 router.patch("/:id", authMiddleware, updateLesson);
 router.delete("/:id", authMiddleware, deleteLesson);
 

@@ -189,13 +189,11 @@ export const deleteLesson = async (req, res) => {
   }
 };
 
-// Create current table
-export const copyMainTableToCurrentTable = async () => {
-  const { teacherId } = req.body;
+// Create current lessons from main lessons
+export const createCurrentLessonsFromMainLessons = async (req, res) => {
   try {
     const mainTableData = await Lesson.find({
       role: "main",
-      teacher: teacherId,
     });
 
     const currentWeekStart = new Date();
@@ -205,7 +203,7 @@ export const copyMainTableToCurrentTable = async () => {
         currentWeekStart.getDate() - currentWeekStart.getDay() + 1
       );
     } else {
-      if (currentWeekStart.getHours > 19) {
+      if (currentWeekStart.getHours() > 19) {
         currentWeekStart.setDate(currentWeekStart.getDate() + 1);
       } else {
         currentWeekStart.setDate(currentWeekStart.getDate() - 6);
@@ -218,15 +216,14 @@ export const copyMainTableToCurrentTable = async () => {
 
       return {
         ...data.toObject(),
-        date,
+        date: date,
+        role: "current",
       };
     });
 
-    const lessons = new Lesson(currentTableData);
+    await Lesson.insertMany(currentTableData);
 
-    await Lesson.insertMany(lessons);
-
-    res.status(201).json(lessons);
+    res.status(201).json({ message: "Create current tables" });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
