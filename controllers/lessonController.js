@@ -86,6 +86,9 @@ export const getWeeklyLessonsForCurrentTable = async (req, res) => {
   );
   const endWeek = new Date(currentDate.setDate(currentDate.getDate() + 6));
 
+  startWeek.setHours(0, 0, 0, 0);
+  endWeek.setHours(23, 59, 59, 999);
+
   try {
     if (teacherId === "undefined") {
       return res.status(200).json([]);
