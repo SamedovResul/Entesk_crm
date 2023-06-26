@@ -52,6 +52,12 @@ const lessonSchema = new Schema({
     enum: ["unviewed", "confirmed", "cancelled"],
     default: "unviewed",
   },
+  note: {
+    type: String,
+  },
+  task: {
+    type: String,
+  },
   createdDate: {
     type: Date,
     default: Date.now,
