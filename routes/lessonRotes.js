@@ -13,6 +13,7 @@ const router = express.Router();
 
 router.get("/main", authMiddleware, getWeeklyLessonsForMainTable);
 router.get("/current", authMiddleware, getWeeklyLessonsForCurrentTable);
+router.get("/main/panel", authMiddleware, getWeeklyLessonsForMainTable);
 router.post("/", authMiddleware, createLesson);
 router.post(
   "/current/all",
