@@ -82,9 +82,9 @@ export const getWeeklyLessonsForCurrentTable = async (req, res) => {
   const { teacherId } = req.query;
   const currentDate = new Date();
   const startWeek = new Date(
-    currentDate.setDate(currentDate.getDate() - currentDate.getDay())
+    currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1)
   );
-  const endWeek = new Date(startWeek.setDate(startWeek.getDate() + 6));
+  const endWeek = new Date(currentDate.setDate(currentDate.getDate() + 6));
 
   try {
     if (teacherId === "undefined") {
