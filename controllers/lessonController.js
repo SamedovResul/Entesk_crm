@@ -222,8 +222,11 @@ export const createCurrentLessonsFromMainLessons = async (req, res) => {
       const date = new Date(currentWeekStart);
       date.setDate(date.getDate() + data.day - 1);
 
+      const dataObj = data.toObject();
+      delete dataObj._id;
+      delete dataObj.status;
       return {
-        ...data.toObject(),
+        ...dataObj,
         date: date,
         role: "current",
       };

@@ -49,7 +49,7 @@ const lessonSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["unviewed", "confirmed", "canceled"],
+    enum: ["unviewed", "confirmed", "cancelled"],
     default: "unviewed",
   },
   createdDate: {
