@@ -116,13 +116,18 @@ startWeek.setDate(startWeek.getDate() - startWeek.getDay() + 1);
 // Get weekly lessons for admin main panel
 export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
   const { startDate, endDate, teacherId, studentId, status } = req.query;
+  const { role, id } = req.user;
 
   try {
     const filterObj = {
       role: "current",
     };
 
-    if (teacherId) {
+    if (role === "teacher") {
+      filterObj.teacher = id;
+    } else if (role === "student") {
+      filterObj.student = id;
+    } else if (teacherId) {
       filterObj.teacher = teacherId;
     } else if (studentId) {
       filterObj.student = studentId;
