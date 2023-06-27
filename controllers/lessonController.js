@@ -219,7 +219,7 @@ export const deleteLesson = async (req, res) => {
     }
 
     if (deletedLesson.role === "current") {
-      createNotificationForUpdate(deletedLesson.teacher, students.student);
+      createNotificationForUpdate(deletedLesson.teacher, deletedLesson.students);
     }
 
     res.status(200).json(deletedLesson);
