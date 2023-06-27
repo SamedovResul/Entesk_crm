@@ -5,7 +5,8 @@ import {
   deleteLesson,
   getWeeklyLessonsForCurrentTable,
   getWeeklyLessonsForMainTable,
-  updateLesson,
+  updateLessonInMainPanel,
+  updateLessonInTable,
 } from "../controllers/lessonController.js";
 import { authMiddleware } from "../middleware/auth.js";
 
@@ -20,7 +21,8 @@ router.post(
   authMiddleware,
   createCurrentLessonsFromMainLessons
 );
-router.patch("/:id", authMiddleware, updateLesson);
+router.patch("/main/panel/:id", authMiddleware, updateLessonInMainPanel);
+router.patch("/table/:id", authMiddleware, updateLessonInTable);
 router.delete("/:id", authMiddleware, deleteLesson);
 
 export default router;

@@ -109,6 +109,10 @@ export const getWeeklyLessonsForCurrentTable = async (req, res) => {
   }
 };
 
+const startWeek = new Date();
+
+startWeek.setDate(startWeek.getDate() - startWeek.getDay() + 1);
+
 // Get weekly lessons for admin main panel
 export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
   const { startDate, endDate, teacherId, studentId, status } = req.query;
@@ -144,8 +148,8 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
   }
 };
 
-// Update lesson
-export const updateLesson = async (req, res) => {
+// Update lesson in current and main table
+export const updateLessonInTable = async (req, res) => {
   const { id } = req.params;
   const { role } = req.user;
 
@@ -173,6 +177,25 @@ export const updateLesson = async (req, res) => {
     ) {
       createNotificationForLessonsCount(updatedLesson);
     }
+    res.status(200).json(updatedLesson);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Update lesson in main panel
+export const updateLessonInMainPanel = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body, {
+      new: true,
+    }).populate("teacher course students.student");
+
+    if (!updatedLesson) {
+      return res.status(404).json({ message: "Lesson not found" });
+    }
+
     res.status(200).json(updatedLesson);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
