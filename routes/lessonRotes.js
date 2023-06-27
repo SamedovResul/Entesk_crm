@@ -11,6 +11,7 @@ import {
 import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
+ 
 
 router.get("/main", authMiddleware, getWeeklyLessonsForMainTable);
 router.get("/current", authMiddleware, getWeeklyLessonsForCurrentTable);

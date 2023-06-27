@@ -2,6 +2,7 @@ import { Student } from "../models/studentModel.js";
 import { Course } from "../models/courseModel.js";
 import { Teacher } from "../models/teacherModel.js";
 import { Admin } from "../models/adminModel.js";
+import { Token } from "../models/tokenSchema.js"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -87,12 +88,15 @@ export const registerTeacher = async (req, res) => {
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
 
+    
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(409)
         .json({ message: "A user with the same email already exists" });
       // .json({ key: "email-already-exists" });
     }
+
+    
 
     const coursesId = req.body.courses;
     const salt = await bcrypt.genSalt(10);
@@ -116,7 +120,7 @@ export const registerTeacher = async (req, res) => {
 // Login
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
+  
   try {
     const admin = await Admin.findOne({ email });
     const student = await Student.findOne({ email });
@@ -128,7 +132,7 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid =  bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(404).json({ message: "Invalid password" });
@@ -139,10 +143,26 @@ export const login = async (req, res) => {
       process.env.SECRET_KEY,
       { expiresIn: "100m" }
     );
+    // refresh and accesstoken callback for creating
+    const  AccessToken = createAccessToken(user)
+    const  RefreshToken = createRefreshToken(user)
+
+    saveTokensToDatabase(user._id, RefreshToken, AccessToken )
+
+    // send refresh token to cookies
+    res.cookie('refreshtoken', RefreshToken, {
+      httpOnly: true,
+      path: "/api/user/auth/refresh_token",
+      maxAge: 7*24*60*60*1000 // 7d
+    })
 
     const cleanedUser = user.toObject();
     delete cleanedUser.password;
-    res.status(200).json({ user: cleanedUser, token });
+    res.status(200).json({
+      user: cleanedUser, 
+      AccessToken: AccessToken,
+      RefreshToken: RefreshToken
+    });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
@@ -198,4 +218,76 @@ export const changeForgottenPassword = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
+};
+
+// create accesstoken 
+const createAccessToken = (user) =>{
+  console.log(user)
+  const AccessToken = jwt.sign(
+    { email: user.email, id: user._id },
+    process.env.SECRET_KEY,
+    { expiresIn: "30m" }
+  );
+  return AccessToken
+  // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '11m'})
+}
+
+// create refreshtoken 
+const createRefreshToken = (user) =>{
+  console.log(user)
+  const  RefreshToken = jwt.sign(
+    { email: user.email, id: user._id },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: '7d' }
+  );
+  return RefreshToken
+  // return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})
+}
+
+
+// verify refresh token
+export const refreshToken = async (req, res) =>{
+  try {
+    const rf_token = req.headers.cookie.split("=")[1];
+    const token = await Token.findOne({ refreshToken:rf_token });
+
+    if(token){
+      
+      jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (err, user) =>{
+          if(err) {
+            revokeTokenFromDatabase(rf_token)
+            return res.status(400).json({msg: "Please Login or Register"})
+          }else{
+            const accesstoken = createAccessToken(
+              {email:user.email, _id:user.id}
+              )
+            res.json({accesstoken})
+          }
+          // return res.status(400).json({msg: "Please Login or Register"})
+          
+          
+      })
+    }
+      
+
+  } catch (err) {
+      return res.status(404).json({msg: err.message})
+  }
+  
+}
+
+
+const saveTokensToDatabase = async (userId, refreshToken, accessToken) => {
+  const token = new Token({
+    userId,
+    refreshToken,
+    accessToken,
+  });
+
+  await token.save();
+};
+
+
+const revokeTokenFromDatabase = async (refreshToken) => {
+  await Token.deleteOne({ refreshToken });
 };
