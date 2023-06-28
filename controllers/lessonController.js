@@ -126,11 +126,11 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
     if (role === "teacher") {
       filterObj.teacher = id;
     } else if (role === "student") {
-      filterObj.student = id;
+      filterObj["students.student"] = id;
     } else if (teacherId) {
       filterObj.teacher = teacherId;
     } else if (studentId) {
-      filterObj.student = studentId;
+      filterObj["students.student"] = studentId;
     }
 
     if (startDate && endDate) {
@@ -219,7 +219,10 @@ export const deleteLesson = async (req, res) => {
     }
 
     if (deletedLesson.role === "current") {
-      createNotificationForUpdate(deletedLesson.teacher, deletedLesson.students);
+      createNotificationForUpdate(
+        deletedLesson.teacher,
+        deletedLesson.students
+      );
     }
 
     res.status(200).json(deletedLesson);
