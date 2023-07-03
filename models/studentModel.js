@@ -46,6 +46,10 @@ const studentSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  profileImage: {
+    type: Buffer,
+    default: null,
+  },
   createdDate: {
     type: Date,
     default: Date.now,

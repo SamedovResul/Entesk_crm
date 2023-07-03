@@ -139,7 +139,7 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
         $lte: new Date(endDate),
       };
     }
-    if (status === "confirmed" || status === "canceled") {
+    if (status === "confirmed" || status === "cancelled") {
       filterObj.status = status;
     }
 

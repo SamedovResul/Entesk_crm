@@ -34,6 +34,10 @@ const teacherSchema = new Schema({
     type: String,
     default: "teacher",
   },
+  profileImage: {
+    type: Buffer,
+    default: null,
+  },
   createdDate: {
     type: Date,
     default: Date.now,
