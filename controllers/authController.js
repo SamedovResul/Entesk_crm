@@ -231,7 +231,7 @@ const createAccessToken = (user) => {
 
 // create refreshtoken
 const createRefreshToken = (user) => {
-  console.log(user);
+  console.log(user); 
   const RefreshToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
