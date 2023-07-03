@@ -115,7 +115,8 @@ startWeek.setDate(startWeek.getDate() - startWeek.getDay() + 1);
 
 // Get weekly lessons for admin main panel
 export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
-  const { startDate, endDate, teacherId, studentId, status } = req.query;
+  const { startDate, endDate, teacherId, studentId, status, attendance } =
+    req.query;
   const { role, id } = req.user;
 
   try {
@@ -141,6 +142,12 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
     }
     if (status === "confirmed" || status === "cancelled") {
       filterObj.status = status;
+    }
+
+    if (attendance === "present") {
+      filterObj["students.attendance"] = 1;
+    } else if (attendance === "absent") {
+      filterObj["students.attendance"] = -1;
     }
 
     let lessons;

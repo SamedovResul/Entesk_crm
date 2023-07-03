@@ -231,7 +231,7 @@ const createAccessToken = (user) => {
 
 // create refreshtoken
 const createRefreshToken = (user) => {
-  console.log(user); 
+  console.log(user);
   const RefreshToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
@@ -279,4 +279,16 @@ const saveTokensToDatabase = async (userId, refreshToken, accessToken) => {
 
 const revokeTokenFromDatabase = async (refreshToken) => {
   await Token.deleteOne({ refreshToken });
+};
+
+// Get user
+export const getUser = async (req, res) => {
+  const {id}= req.user
+
+  try {
+    const admin = await Admin.findById(id)
+
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
 };
