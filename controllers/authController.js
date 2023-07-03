@@ -221,7 +221,7 @@ export const changeForgottenPassword = async (req, res) => {
 const createAccessToken = (user) => {
   console.log(user);
   const AccessToken = jwt.sign(
-    { email: user.email, id: user._id },
+    { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
     { expiresIn: "100m" }
   );
@@ -255,6 +255,7 @@ export const refreshToken = async (req, res) => {
         } else {
           const accesstoken = createAccessToken({
             email: user.email,
+            role: user.role,
             _id: user.id,
           });
           res.json({ accesstoken });
@@ -283,11 +284,27 @@ const revokeTokenFromDatabase = async (refreshToken) => {
 
 // Get user
 export const getUser = async (req, res) => {
-  const {id}= req.user
+  const { id, role } = req.user;
 
   try {
-    const admin = await Admin.findById(id)
+    let user;
+    if (role === "admin") {
+      user = await Admin.findById(id);
+    } else if (role === "teacher") {
+      user = await Teacher.findById(id);
+    } else if (role === "student") {
+      user = await Student.findById(id);
+    }
 
+    if (!user) {
+      return res.status(404).json({ message: "not found user" });
+    }
+
+    const userObj = user.toObject();
+
+    delete userObj.password;
+
+    res.status(200).json(userObj);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
