@@ -223,7 +223,7 @@ const createAccessToken = (user) => {
   const AccessToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "30m" }
+    { expiresIn: "100m" }
   );
   return AccessToken;
   // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '11m'})
