@@ -135,11 +135,6 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign(
-      { email: user.email, role: user.role, id: user._id },
-      process.env.SECRET_KEY,
-      { expiresIn: "100m" }
-    );
     // refresh and accesstoken callback for creating
     const AccessToken = createAccessToken(user);
     const RefreshToken = createRefreshToken(user);
@@ -153,10 +148,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
     });
 
-    const cleanedUser = user.toObject();
-    delete cleanedUser.password;
     res.status(200).json({
-      user: cleanedUser,
       AccessToken: AccessToken,
       RefreshToken: RefreshToken,
     });
@@ -223,7 +215,7 @@ const createAccessToken = (user) => {
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "100m" }
+    { expiresIn: "120m" }
   );
   return AccessToken;
   // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '11m'})

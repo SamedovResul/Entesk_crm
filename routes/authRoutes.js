@@ -12,7 +12,7 @@ import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getUser);
+router.get("/",authMiddleware, getUser);
 router.post("/admin/sign", registerAdmin);
 router.post("/student/sign", authMiddleware, registerStudent);
 router.post("/teacher/sign", authMiddleware, registerTeacher);
