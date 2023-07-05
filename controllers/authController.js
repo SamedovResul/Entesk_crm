@@ -301,3 +301,52 @@ export const getUser = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
+
+// getWeeksBetweenDates
+
+// const start = new Date("2023-02-24");
+// const end = new Date("2023-02-23");
+
+// console.log(start > end);
+
+const getWeeksBetweenDates = (start, end) => {
+  let weeksList = [];
+
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  let startWeek = new Date(startDate);
+  let endWeek = new Date(startDate);
+
+  if (endWeek.getDay() > 0) {
+    endWeek.setDate(startDate.getDate() + (7 - startDate.getDay()));
+  }
+
+  const lastWeekEndDay = new Date(endDate);
+
+  if (lastWeekEndDay.getDay() > 0) {
+    lastWeekEndDay.setDate(
+      lastWeekEndDay.getDate() + (7 - lastWeekEndDay.getDay())
+    );
+  }
+  lastWeekEndDay.setDate(lastWeekEndDay.getDate() + 1);
+
+  while (lastWeekEndDay > endWeek) {
+    weeksList.push({
+      startWeek: startWeek.toString(),
+      endWeek: endWeek.toString(),
+    });
+
+    if (startWeek.getDay() === 0) {
+      startWeek.setDate(startWeek.getDate() + 1);
+    } else {
+      startWeek.setDate(startWeek.getDate() + (8 - startWeek.getDay()));
+    }
+
+    endWeek.setDate(endWeek.getDate() + 7);
+  }
+
+  console.log(weeksList);
+};
+
+getWeeksBetweenDates("2023-07-04", "2023-08-18");
