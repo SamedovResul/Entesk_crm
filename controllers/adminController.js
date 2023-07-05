@@ -81,13 +81,16 @@ export const updateAdminPasswordWithoutCheckingOldPassword = async (
 export const updateAdminImage = async (req, res) => {
   const { id } = req.params;
   const { profileImage } = req.body;
-
   try {
     const buffer = Buffer.from(profileImage, "base64");
 
-    const updatedAdmin = await Admin.findByIdAndUpdate(id, {
-      profileImage: buffer,
-    });
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      id,
+      {
+        profileImage: buffer,
+      },
+      { new: true }
+    );
 
     if (!updatedAdmin) {
       res.status(404).json({ message: "Not found admin" });

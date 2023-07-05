@@ -113,12 +113,18 @@ export const updateTeacherImage = async (req, res) => {
   const { id } = req.params;
   const { profileImage } = req.body;
 
+  console.log("teacher");
+
   try {
     const buffer = Buffer.from(profileImage, "base64");
 
-    const updatedTeacher = await Teacher.findByIdAndUpdate(id, {
-      profileImage: buffer,
-    });
+    const updatedTeacher = await Teacher.findByIdAndUpdate(
+      id,
+      {
+        profileImage: buffer,
+      },
+      { new: true }
+    );
 
     if (!updatedTeacher) {
       res.status(404).json({ message: "Not found student" });
