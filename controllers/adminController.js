@@ -81,6 +81,7 @@ export const updateAdminPasswordWithoutCheckingOldPassword = async (
 export const updateAdminImage = async (req, res) => {
   const { id } = req.params;
   const { profileImage } = req.body;
+
   try {
     const buffer = Buffer.from(profileImage, "base64");
 
