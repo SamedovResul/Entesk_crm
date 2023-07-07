@@ -113,8 +113,6 @@ export const updateTeacherImage = async (req, res) => {
   const { id } = req.params;
   const { profileImage } = req.body;
 
-  console.log("teacher");
-
   try {
     const buffer = Buffer.from(profileImage, "base64");
 
@@ -130,7 +128,14 @@ export const updateTeacherImage = async (req, res) => {
       res.status(404).json({ message: "Not found student" });
     }
 
-    res.status(200).json(updatedTeacher);
+    const base64Image = Buffer.from(updatedTeacher.profileImage).toString(
+      "base64"
+    );
+
+    const objTeacher = updatedStudent.toObject();
+    objTeacher.profileImage = base64Image;
+
+    res.status(200).json(objTeacher);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
