@@ -21,7 +21,8 @@ const adminSchema = new Schema({
     default: "admin",
   },
   profileImage: {
-    type: Buffer,
+    data: Buffer,
+    contentType: String,
     default: null,
   },
   createdDate: {
