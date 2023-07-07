@@ -108,7 +108,7 @@ export const updateTeacherPassword = async (req, res) => {
   }
 };
 
-// Update student profile image
+// Update teacher profile image
 export const updateTeacherImage = async (req, res) => {
   const { id } = req.params;
   const { profileImage } = req.body;
@@ -125,14 +125,14 @@ export const updateTeacherImage = async (req, res) => {
     );
 
     if (!updatedTeacher) {
-      res.status(404).json({ message: "Not found student" });
+      res.status(404).json({ message: "Not found teacher" });
     }
 
     const base64Image = Buffer.from(updatedTeacher.profileImage).toString(
       "base64"
     );
 
-    const objTeacher = updatedStudent.toObject();
+    const objTeacher = updatedTeacher.toObject();
     objTeacher.profileImage = base64Image;
 
     res.status(200).json(objTeacher);
