@@ -2,7 +2,7 @@ import { Student } from "../models/studentModel.js";
 import { Course } from "../models/courseModel.js";
 import { Teacher } from "../models/teacherModel.js";
 import { Admin } from "../models/adminModel.js";
-import { Token } from "../models/tokenSchema.js";
+import { Token } from "../models/tokenSchema.js"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -87,13 +87,15 @@ export const registerTeacher = async (req, res) => {
     const existingAdmin = await Admin.findOne({ email });
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-
+    
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(409)
         .json({ message: "A user with the same email already exists" });
       // .json({ key: "email-already-exists" });
     }
+
+    
 
     const coursesId = req.body.courses;
     const salt = await bcrypt.genSalt(10);
@@ -117,7 +119,6 @@ export const registerTeacher = async (req, res) => {
 // Login
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const admin = await Admin.findOne({ email });
     const student = await Student.findOne({ email });
@@ -129,28 +130,26 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isPasswordValid = bcrypt.compare(password, user.password);
+    const isPasswordValid =  bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(404).json({ message: "Invalid password" });
     }
 
     // refresh and accesstoken callback for creating
-    const AccessToken = createAccessToken(user);
-    const RefreshToken = createRefreshToken(user);
-
-    saveTokensToDatabase(user._id, RefreshToken, AccessToken);
-
+    const  AccessToken = createAccessToken(user)
+    const  RefreshToken = createRefreshToken(user)
+    saveTokensToDatabase(user._id,RefreshToken, AccessToken)
     // send refresh token to cookies
-    res.cookie("refreshtoken", RefreshToken, {
+    res.cookie('refreshtoken', RefreshToken, {
       httpOnly: true,
       path: "/api/user/auth/refresh_token",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
-    });
+      maxAge: 7*24*60*60*1000 // 7d
+    })
 
     res.status(200).json({
       AccessToken: AccessToken,
-      RefreshToken: RefreshToken,
+      RefreshToken: RefreshToken
     });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
@@ -209,34 +208,37 @@ export const changeForgottenPassword = async (req, res) => {
   }
 };
 
-// create accesstoken
-const createAccessToken = (user) => {
-  console.log(user);
+// create accesstoken 
+const createAccessToken = (user) =>{
+  console.log(user)
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "120m" }
+    { expiresIn: "1m" }
   );
-  return AccessToken;
+  return AccessToken
   // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '11m'})
-};
+}
 
-// create refreshtoken
-const createRefreshToken = (user) => {
-  console.log(user);
-  const RefreshToken = jwt.sign(
+// create refreshtoken 
+const createRefreshToken = (user) =>{
+  console.log(user)
+  const  RefreshToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: '7d' }
   );
-  return RefreshToken;
+  return RefreshToken
   // return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})
-};
+}
+
 
 // verify refresh token
-export const refreshToken = async (req, res) => {
+export const refreshToken = async (req, res) =>{
   try {
+    console.log(req.headers.cookie)
     const rf_token = req.headers.cookie.split("=")[1];
+    
     const token = await Token.findOne({ refreshToken: rf_token });
 
     if (token) {
@@ -247,7 +249,6 @@ export const refreshToken = async (req, res) => {
         } else {
           const accesstoken = createAccessToken({
             email: user.email,
-            role: user.role,
             _id: user.id,
           });
           res.json({ accesstoken });
@@ -256,7 +257,7 @@ export const refreshToken = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(404).json({ msg: err.message });
+      return res.status(404).json({msg: err.message})
   }
 };
 

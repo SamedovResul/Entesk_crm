@@ -118,20 +118,14 @@ startWeek.setDate(startWeek.getDate() - startWeek.getDay() + 1);
 
 // Get weekly lessons for admin main panel
 export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
-  const { startDate, endDate, teacherId, studentId, status, attendance } =
-    req.query;
-  const { role, id } = req.user;
+  const { startDate, endDate, teacherId, studentId, status } = req.query;
 
   try {
     const filterObj = {
       role: "current",
     };
 
-    if (role === "teacher") {
-      filterObj.teacher = id;
-    } else if (role === "student") {
-      filterObj["students.student"] = id;
-    } else if (teacherId) {
+    if (teacherId) {
       filterObj.teacher = teacherId;
     } else if (studentId) {
       filterObj["students.student"] = studentId;
@@ -146,26 +140,10 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
     if (status === "confirmed" || status === "cancelled") {
       filterObj.status = status;
     }
-
-    if (attendance === "present") {
-      filterObj["students.attendance"] = 1;
-    } else if (attendance === "absent") {
-      filterObj["students.attendance"] = -1;
-    }
-
-    let lessons;
-
-    if (studentId || role === "student") {
-      lessons = await Lesson.find(filterObj, {
-        students: { $elemMatch: { student: studentId } },
-      })
-        .populate("teacher course students.student")
-        .select("day date time role status note task createdDate");
-    } else {
-      lessons = await Lesson.find(filterObj).populate(
-        "teacher course students.student"
-      );
-    }
+    console.log(filterObj)
+    const lessons = await Lesson.find(filterObj).populate(
+      "teacher course students.student"
+    );
 
     res.status(200).json(lessons);
   } catch (err) {
@@ -255,10 +233,7 @@ export const deleteLesson = async (req, res) => {
     }
 
     if (deletedLesson.role === "current") {
-      createNotificationForUpdate(
-        deletedLesson.teacher,
-        deletedLesson.students
-      );
+      createNotificationForUpdate(deletedLesson.teacher, students.student);
     }
 
     res.status(200).json(deletedLesson);

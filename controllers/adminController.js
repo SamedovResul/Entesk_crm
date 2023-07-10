@@ -6,7 +6,6 @@ export const getAdmin = async (req, res) => {
   const { id } = req.user;
   try {
     const admin = await Admin.findById(id);
-
     if (!admin) {
       return res.status(404).json({ message: "admin not found" });
     }
