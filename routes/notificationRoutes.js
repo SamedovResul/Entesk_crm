@@ -1,8 +1,15 @@
 import express from "express";
-import { getNotificationsForAdmin } from "../controllers/notificationController.js";
+import {
+  getNotificationsForAdmin,
+  getNotificationsForStudent,
+  getNotificationsForTeacher,
+} from "../controllers/notificationController.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/admin", getNotificationsForAdmin);
+router.get("/admin", authMiddleware, getNotificationsForAdmin);
+router.get("/teacher", authMiddleware, getNotificationsForTeacher);
+router.get("/student", authMiddleware, getNotificationsForStudent);
 
 export default router;
