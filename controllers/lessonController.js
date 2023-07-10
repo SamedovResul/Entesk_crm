@@ -258,7 +258,7 @@ export const deleteLessonInMainPanel = async (req, res) => {
     const deletedLesson = await Lesson.findByIdAndDelete(id);
 
     if (!deletedLesson) {
-      res.status(404).json({ message: "Lesson not found" });
+      res.status(404).json({ message: "Lesson Not Found" });
     }
 
     res.status(200).json(deletedLesson);
