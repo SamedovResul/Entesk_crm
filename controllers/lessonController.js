@@ -116,16 +116,21 @@ const startWeek = new Date();
 
 startWeek.setDate(startWeek.getDate() - startWeek.getDay() + 1);
 
-// Get weekly lessons for admin main panel
-export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
+// Get weekly lessons for main panel
+export const getWeeklyLessonsForMainPanel = async (req, res) => {
   const { startDate, endDate, teacherId, studentId, status } = req.query;
+  const { role, id } = req.user;
 
   try {
     const filterObj = {
       role: "current",
     };
 
-    if (teacherId) {
+    if (role === "teacher") {
+      filterObj.teacher = id;
+    } else if (role === "student") {
+      filterObj.student = id;
+    } else if (teacherId) {
       filterObj.teacher = teacherId;
     } else if (studentId) {
       filterObj["students.student"] = studentId;
@@ -140,7 +145,7 @@ export const getWeeklyLessonsForAdminMainPanel = async (req, res) => {
     if (status === "confirmed" || status === "cancelled") {
       filterObj.status = status;
     }
-    console.log(filterObj)
+
     const lessons = await Lesson.find(filterObj).populate(
       "teacher course students.student"
     );
@@ -221,8 +226,8 @@ export const updateLessonInMainPanel = async (req, res) => {
   }
 };
 
-// Delete lesson
-export const deleteLesson = async (req, res) => {
+// Delete lesson in table panel
+export const deleteLessonInTablePanel = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -233,7 +238,27 @@ export const deleteLesson = async (req, res) => {
     }
 
     if (deletedLesson.role === "current") {
-      createNotificationForUpdate(deletedLesson.teacher, students.student);
+      createNotificationForUpdate(
+        deletedLesson.teacher,
+        deletedLesson.students
+      );
+    }
+
+    res.status(200).json(deletedLesson);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Delete lesson in main panel
+export const deleteLessonInMainPanel = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedLesson = await Lesson.findByIdAndDelete(id);
+
+    if (!deletedLesson) {
+      res.status(404).json({ message: "Lesson not found" });
     }
 
     res.status(200).json(deletedLesson);

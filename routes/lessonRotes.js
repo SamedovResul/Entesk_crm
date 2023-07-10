@@ -2,9 +2,10 @@ import express from "express";
 import {
   createCurrentLessonsFromMainLessons,
   createLesson,
-  deleteLesson,
-  getWeeklyLessonsForAdminMainPanel,
+  deleteLessonInMainPanel,
+  deleteLessonInTablePanel,
   getWeeklyLessonsForCurrentTable,
+  getWeeklyLessonsForMainPanel,
   getWeeklyLessonsForMainTable,
   updateLessonInMainPanel,
   updateLessonInTable,
@@ -15,7 +16,7 @@ const router = express.Router();
 
 router.get("/main", authMiddleware, getWeeklyLessonsForMainTable);
 router.get("/current", authMiddleware, getWeeklyLessonsForCurrentTable);
-router.get("/main/panel", authMiddleware, getWeeklyLessonsForAdminMainPanel);
+router.get("/main/panel", authMiddleware, getWeeklyLessonsForMainPanel);
 router.post("/", authMiddleware, createLesson);
 router.post(
   "/current/all",
@@ -24,6 +25,7 @@ router.post(
 );
 router.patch("/main/panel/:id", authMiddleware, updateLessonInMainPanel);
 router.patch("/table/:id", authMiddleware, updateLessonInTable);
-router.delete("/:id", authMiddleware, deleteLesson);
+router.delete("main/panel/:id", authMiddleware, deleteLessonInMainPanel);
+router.delete("table/panel/:id", authMiddleware, deleteLessonInTablePanel);
 
 export default router;

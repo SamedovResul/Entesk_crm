@@ -242,7 +242,8 @@ export const refreshToken = async (req, res) => {
         } else {
           const accesstoken = createAccessToken({
             email: user.email,
-            _id: user.id,
+            id: user.id,
+            role: user.role,
           });
           res.json({ accesstoken });
         }
