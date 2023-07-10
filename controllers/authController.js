@@ -208,26 +208,22 @@ export const changeForgottenPassword = async (req, res) => {
 
 // create accesstoken
 const createAccessToken = (user) => {
-  console.log(user);
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "1m" }
+    { expiresIn: "6h" }
   );
   return AccessToken;
-  // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '11m'})
 };
 
 // create refreshtoken
 const createRefreshToken = (user) => {
-  console.log(user);
   const RefreshToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "7d" }
   );
   return RefreshToken;
-  // return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})
 };
 
 // verify refresh token
@@ -250,7 +246,6 @@ export const refreshToken = async (req, res) => {
           });
           res.json({ accesstoken });
         }
-        // return res.status(400).json({msg: "Please Login or Register"})
       });
     }
   } catch (err) {
