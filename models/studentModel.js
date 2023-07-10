@@ -32,7 +32,7 @@ const studentSchema = new Schema({
     type: String,
     default: "student",
   },
-  amount: {
+  lessonAmount: {
     type: Number,
     required: true,
   },

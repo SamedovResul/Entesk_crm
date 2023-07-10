@@ -58,6 +58,10 @@ const lessonSchema = new Schema({
   task: {
     type: String,
   },
+  salary: {
+    type: Number,
+    required: true,
+  },
   createdDate: {
     type: Date,
     default: Date.now,

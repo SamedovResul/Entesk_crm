@@ -58,10 +58,18 @@ export const createNotificationForUpdate = async (teacherId, students) => {
 export const createNotificationForLessonsCount = async (lesson) => {
   try {
     const completedCourseStudents = lesson.students.filter(
-      (item) => item.student.amount === 0
+      (item) => item.student.lessonAmount === 0
     );
+
+    completedCourseStudents.map(async (item) => {
+      await Notification.create({
+        role: "count",
+        student: item.student._id,
+        isZeroClassCount: true,
+      });
+    });
   } catch (err) {
-    console.log(err);
+    console.log({ message: { error: err.message } });
   }
 };
 
@@ -81,3 +89,36 @@ export const getNotificationsForAdmin = async (req, res) => {
 };
 
 // Get notifications for teacher
+export const getNotificationsForTeacher = async (req, res) => {
+  const { id } = req.user;
+  try {
+    const notifications = await Notification.find({
+      $or: [
+        { role: "birthday" },
+        {
+          role: "update-teacher-table",
+          teacher: id,
+        },
+      ],
+    }).populate("student");
+
+    res.status(200).json(notifications);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Get notifications for student
+export const getNotificationsForStudent = async (req, res) => {
+  const { id } = req.user;
+  try {
+    const notifications = await Notification.find({
+      role: { $in: ["count", "update-student-table"] },
+      _id: id,
+    });
+
+    res.status(200).json(notifications);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};

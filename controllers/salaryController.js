@@ -40,8 +40,8 @@ export const getSalaries = async (req, res) => {
         (lesson) => lesson.status === "confirmed"
       );
 
-      const canceled = teacherLessons.filter(
-        (lesson) => lesson.status === "canceled"
+      const cancelled = teacherLessons.filter(
+        (lesson) => lesson.status === "cancelled"
       );
 
       const participantCount = confirmed.reduce(
@@ -63,7 +63,7 @@ export const getSalaries = async (req, res) => {
       return {
         teacher,
         confirmed: confirmed.length,
-        canceled: canceled.length,
+        cancelled: cancelled.length,
         participantCount,
         salary: teacher.salary,
         total: total,

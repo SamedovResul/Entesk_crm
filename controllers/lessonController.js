@@ -1,4 +1,5 @@
 import { Lesson } from "../models/lessonModel.js";
+import { Teacher } from "../models/teacherModel.js";
 import {
   createNotificationForLessonsCount,
   createNotificationForUpdate,
@@ -9,7 +10,9 @@ export const createLesson = async (req, res) => {
   const { role } = req.user;
 
   try {
-    const newLesson = new Lesson(req.body);
+    const teacher = await Teacher.findById(req.body.teacher);
+
+    const newLesson = new Lesson({ ...req.body, salary: teacher.salary });
 
     await newLesson.populate("teacher course students.student");
 
@@ -176,8 +179,14 @@ export const updateLessonInTable = async (req, res) => {
   const { role } = req.user;
 
   try {
-    const lesson = await Lesson.findById(id);
-    const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body, {
+    let newLesson = req.body;
+
+    if (newLesson.teacher) {
+      const teacher = await Teacher.findById(newLesson.teacher);
+      newLesson.salary = teacher.salary;
+    }
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(id, newLesson, {
       new: true,
     }).populate("teacher course students.student");
 
@@ -192,13 +201,6 @@ export const updateLessonInTable = async (req, res) => {
       );
     }
 
-    if (
-      role === "admin" &&
-      req.body.status === "confirmed" &&
-      lesson.status !== "confirmed"
-    ) {
-      createNotificationForLessonsCount(updatedLesson);
-    }
     res.status(200).json(updatedLesson);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
@@ -208,14 +210,31 @@ export const updateLessonInTable = async (req, res) => {
 // Update lesson in main panel
 export const updateLessonInMainPanel = async (req, res) => {
   const { id } = req.params;
+  const { role } = req.user;
 
   try {
-    const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body, {
+    const lesson = await Lesson.findById(id);
+    let newLesson = req.body;
+
+    if (newLesson.teacher) {
+      const teacher = await Teacher.findById(newLesson.teacher);
+      newLesson.salary = teacher.salary;
+    }
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(id, newLesson, {
       new: true,
     }).populate("teacher course students.student");
 
     if (!updatedLesson) {
       return res.status(404).json({ message: "Lesson not found" });
+    }
+
+    if (
+      role === "admin" &&
+      req.body.status === "confirmed" &&
+      lesson.status !== "confirmed"
+    ) {
+      createNotificationForLessonsCount(updatedLesson);
     }
 
     res.status(200).json(updatedLesson);
