@@ -2,7 +2,7 @@ import { Student } from "../models/studentModel.js";
 import { Course } from "../models/courseModel.js";
 import { Teacher } from "../models/teacherModel.js";
 import { Admin } from "../models/adminModel.js";
-import { Token } from "../models/tokenSchema.js"
+import { Token } from "../models/tokenSchema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
@@ -87,15 +87,13 @@ export const registerTeacher = async (req, res) => {
     const existingAdmin = await Admin.findOne({ email });
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-    
+
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(409)
         .json({ message: "A user with the same email already exists" });
       // .json({ key: "email-already-exists" });
     }
-
-    
 
     const coursesId = req.body.courses;
     const salt = await bcrypt.genSalt(10);
@@ -130,26 +128,26 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isPasswordValid =  bcrypt.compare(password, user.password);
+    const isPasswordValid = bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(404).json({ message: "Invalid password" });
     }
 
     // refresh and accesstoken callback for creating
-    const  AccessToken = createAccessToken(user)
-    const  RefreshToken = createRefreshToken(user)
-    saveTokensToDatabase(user._id,RefreshToken, AccessToken)
+    const AccessToken = createAccessToken(user);
+    const RefreshToken = createRefreshToken(user);
+    saveTokensToDatabase(user._id, RefreshToken, AccessToken);
     // send refresh token to cookies
-    res.cookie('refreshtoken', RefreshToken, {
+    res.cookie("refreshtoken", RefreshToken, {
       httpOnly: true,
       path: "/api/user/auth/refresh_token",
-      maxAge: 7*24*60*60*1000 // 7d
-    })
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
+    });
 
     res.status(200).json({
       AccessToken: AccessToken,
-      RefreshToken: RefreshToken
+      RefreshToken: RefreshToken,
     });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
@@ -208,37 +206,36 @@ export const changeForgottenPassword = async (req, res) => {
   }
 };
 
-// create accesstoken 
-const createAccessToken = (user) =>{
-  console.log(user)
+// create accesstoken
+const createAccessToken = (user) => {
+  console.log(user);
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
     { expiresIn: "1m" }
   );
-  return AccessToken
+  return AccessToken;
   // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '11m'})
-}
+};
 
-// create refreshtoken 
-const createRefreshToken = (user) =>{
-  console.log(user)
-  const  RefreshToken = jwt.sign(
+// create refreshtoken
+const createRefreshToken = (user) => {
+  console.log(user);
+  const RefreshToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: "7d" }
   );
-  return RefreshToken
+  return RefreshToken;
   // return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '7d'})
-}
-
+};
 
 // verify refresh token
-export const refreshToken = async (req, res) =>{
+export const refreshToken = async (req, res) => {
   try {
-    console.log(req.headers.cookie)
+    console.log(req.headers.cookie);
     const rf_token = req.headers.cookie.split("=")[1];
-    
+
     const token = await Token.findOne({ refreshToken: rf_token });
 
     if (token) {
@@ -257,7 +254,7 @@ export const refreshToken = async (req, res) =>{
       });
     }
   } catch (err) {
-      return res.status(404).json({msg: err.message})
+    return res.status(404).json({ msg: err.message });
   }
 };
 
@@ -303,51 +300,44 @@ export const getUser = async (req, res) => {
   }
 };
 
-// getWeeksBetweenDates
+// const getWeeksBetweenDates = (start, end) => {
+//   let weeksList = [];
 
-// const start = new Date("2023-02-24");
-// const end = new Date("2023-02-23");
+//   const startDate = new Date(start);
+//   const endDate = new Date(end);
 
-// console.log(start > end);
+//   let startWeek = new Date(startDate);
+//   let endWeek = new Date(startDate);
 
-const getWeeksBetweenDates = (start, end) => {
-  let weeksList = [];
+//   if (endWeek.getDay() > 0) {
+//     endWeek.setDate(startDate.getDate() + (7 - startDate.getDay()));
+//   }
 
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+//   const lastWeekEndDay = new Date(endDate);
 
-  let startWeek = new Date(startDate);
-  let endWeek = new Date(startDate);
+//   if (lastWeekEndDay.getDay() > 0) {
+//     lastWeekEndDay.setDate(
+//       lastWeekEndDay.getDate() + (7 - lastWeekEndDay.getDay())
+//     );
+//   }
+//   lastWeekEndDay.setDate(lastWeekEndDay.getDate() + 1);
 
-  if (endWeek.getDay() > 0) {
-    endWeek.setDate(startDate.getDate() + (7 - startDate.getDay()));
-  }
+//   while (lastWeekEndDay > endWeek) {
+//     weeksList.push({
+//       startWeek: startWeek.toString(),
+//       endWeek: endWeek.toString(),
+//     });
 
-  const lastWeekEndDay = new Date(endDate);
+//     if (startWeek.getDay() === 0) {
+//       startWeek.setDate(startWeek.getDate() + 1);
+//     } else {
+//       startWeek.setDate(startWeek.getDate() + (8 - startWeek.getDay()));
+//     }
 
-  if (lastWeekEndDay.getDay() > 0) {
-    lastWeekEndDay.setDate(
-      lastWeekEndDay.getDate() + (7 - lastWeekEndDay.getDay())
-    );
-  }
-  lastWeekEndDay.setDate(lastWeekEndDay.getDate() + 1);
+//     endWeek.setDate(endWeek.getDate() + 7);
+//   }
 
-  while (lastWeekEndDay > endWeek) {
-    weeksList.push({
-      startWeek: startWeek.toString(),
-      endWeek: endWeek.toString(),
-    });
+//   console.log(weeksList);
+// };
 
-    if (startWeek.getDay() === 0) {
-      startWeek.setDate(startWeek.getDate() + 1);
-    } else {
-      startWeek.setDate(startWeek.getDate() + (8 - startWeek.getDay()));
-    }
-
-    endWeek.setDate(endWeek.getDate() + 7);
-  }
-
-  console.log(weeksList);
-};
-
-getWeeksBetweenDates("2023-07-04", "2023-08-18");
+// getWeeksBetweenDates("2023-07-04", "2023-08-18");
