@@ -227,6 +227,7 @@ export const updateLessonInMainPanel = async (req, res) => {
 };
 
 // Delete lesson in table panel
+
 export const deleteLessonInTablePanel = async (req, res) => {
   const { id } = req.params;
 
