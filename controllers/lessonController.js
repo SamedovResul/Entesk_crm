@@ -129,7 +129,7 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
     if (role === "teacher") {
       filterObj.teacher = id;
     } else if (role === "student") {
-      filterObj.student = id;
+      filterObj["students.student"] = id;
     } else if (teacherId) {
       filterObj.teacher = teacherId;
     } else if (studentId) {

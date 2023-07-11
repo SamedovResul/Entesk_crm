@@ -122,3 +122,15 @@ export const getNotificationsForStudent = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
+
+// Do as notification seen{
+const doAsNotificationsSeen = async (req, res) => {
+  const { role } = req.user;
+
+  try {
+    const filterObj = {};
+    
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};

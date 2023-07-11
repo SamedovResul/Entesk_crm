@@ -42,7 +42,15 @@ const notificationSchema = new Schema({
       return this.role === "birthday";
     },
   },
-  isViewed: {
+  isViewedAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isViewedTeacher: {
+    type: Boolean,
+    default: false,
+  },
+  isViewedStudent: {
     type: Boolean,
     default: false,
   },
