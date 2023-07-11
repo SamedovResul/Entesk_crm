@@ -255,6 +255,7 @@ export const deleteLessonInTablePanel = async (req, res) => {
 export const deleteLessonInMainPanel = async (req, res) => {
   const { id } = req.params;
 
+  console.log("salam");
   try {
     const deletedLesson = await Lesson.findByIdAndDelete(id);
 

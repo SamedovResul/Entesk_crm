@@ -25,7 +25,7 @@ router.post(
 );
 router.patch("/main/panel/:id", authMiddleware, updateLessonInMainPanel);
 router.patch("/table/:id", authMiddleware, updateLessonInTable);
-router.delete("main/panel/:id", authMiddleware, deleteLessonInMainPanel);
-router.delete("table/panel/:id", authMiddleware, deleteLessonInTablePanel);
+router.delete("/main/panel/:id", authMiddleware, deleteLessonInMainPanel);
+router.delete("/table/panel/:id", authMiddleware, deleteLessonInTablePanel);
 
 export default router;
