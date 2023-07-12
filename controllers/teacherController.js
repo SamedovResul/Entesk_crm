@@ -108,39 +108,6 @@ export const updateTeacherPassword = async (req, res) => {
   }
 };
 
-// Update teacher profile image
-export const updateTeacherImage = async (req, res) => {
-  const { id } = req.params;
-  const { profileImage } = req.body;
-
-  try {
-    const buffer = Buffer.from(profileImage, "base64");
-
-    const updatedTeacher = await Teacher.findByIdAndUpdate(
-      id,
-      {
-        profileImage: buffer,
-      },
-      { new: true }
-    );
-
-    if (!updatedTeacher) {
-      res.status(404).json({ message: "Not found teacher" });
-    }
-
-    const base64Image = Buffer.from(updatedTeacher.profileImage).toString(
-      "base64"
-    );
-
-    const objTeacher = updatedTeacher.toObject();
-    objTeacher.profileImage = base64Image;
-
-    res.status(200).json(objTeacher);
-  } catch (err) {
-    res.status(500).json({ message: { error: err.message } });
-  }
-};
-
 // Calculate teacher salary
 
 export const calculateSalary = async (req, res) => {

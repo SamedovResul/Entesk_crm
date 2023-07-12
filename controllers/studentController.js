@@ -154,35 +154,4 @@ export const updateStudentPassword = async (req, res) => {
   }
 };
 
-// Update student profile image
-export const updateStudentImage = async (req, res) => {
-  const { id } = req.params;
-  const { profileImage } = req.body;
 
-  try {
-    const buffer = Buffer.from(profileImage, "base64");
-
-    const updatedStudent = await Student.findByIdAndUpdate(
-      id,
-      {
-        profileImage: buffer,
-      },
-      { new: true }
-    );
-
-    if (!updatedStudent) {
-      res.status(404).json({ message: "Not found student" });
-    }
-
-    const base64Image = Buffer.from(updatedStudent.profileImage).toString(
-      "base64"
-    );
-
-    const objStudent = updatedStudent.toObject();
-    objStudent.profileImage = base64Image;
-
-    res.status(200).json(objStudent);
-  } catch (err) {
-    res.status(500).json({ message: { error: err.message } });
-  }
-};
