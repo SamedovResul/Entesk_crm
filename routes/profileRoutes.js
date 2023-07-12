@@ -1,8 +1,12 @@
 import express from "express";
-import { uploadProfileImage } from "../controllers/profileController.js";
+import {
+  getProfileImage,
+  uploadProfileImage,
+} from "../controllers/profileController.js";
 
 const router = express.Router();
 
+router.get("/image", getProfileImage);
 router.patch("/image/upload", uploadProfileImage);
 
 export default router;

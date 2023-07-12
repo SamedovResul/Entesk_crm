@@ -1,8 +1,21 @@
 import { ProfileImage } from "../models/profileImageModel.js";
 
+// Get profile image
+export const getProfileImage = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const profileImage = await ProfileImage.find({ userId: id });
+
+    res.status(200).json(profileImage);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
 // Upload profile image
 export const uploadProfileImage = async (req, res) => {
-  const { id, role } = req.user;
+  const { id } = req.user;
   const { profileImage } = req.body;
 
   try {
