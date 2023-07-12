@@ -118,7 +118,8 @@ startWeek.setDate(startWeek.getDate() - startWeek.getDay() + 1);
 
 // Get weekly lessons for main panel
 export const getWeeklyLessonsForMainPanel = async (req, res) => {
-  const { startDate, endDate, teacherId, studentId, status } = req.query;
+  const { startDate, endDate, teacherId, studentId, status, attendance } =
+    req.query;
   const { role, id } = req.user;
 
   try {
@@ -142,6 +143,7 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
         $lte: new Date(endDate),
       };
     }
+
     if (status === "confirmed" || status === "cancelled") {
       filterObj.status = status;
     }
@@ -156,7 +158,7 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
 
     if (studentId || role === "student") {
       lessons = await Lesson.find(filterObj, {
-        students: { $elemMatch: { student: studentId } },
+        students: { $elemMatch: { student: studentId || id } },
       })
         .populate("teacher course students.student")
         .select("day date time role status note task createdDate");
