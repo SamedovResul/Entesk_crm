@@ -42,6 +42,7 @@ export const uploadProfileImage = async (req, res) => {
     );
 
     const objProfileImage = newProfileImage.toObject();
+
     objProfileImage.profileImage = base64Image;
 
     res.status(200).json(objProfileImage);
