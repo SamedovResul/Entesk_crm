@@ -123,13 +123,34 @@ export const getNotificationsForStudent = async (req, res) => {
   }
 };
 
-// Do as notification seen{
-const doAsNotificationsSeen = async (req, res) => {
+// Do as notification seen
+export const doAsNotificationsSeen = async (req, res) => {
   const { role } = req.user;
 
   try {
-    const filterObj = {};
-    
+    let updatedNotifications;
+
+    if (role === "admin") {
+      updatedNotifications = await Notification.updateMany(
+        { isViewedAdmin: false },
+        { isViewedAdmin: true },
+        { new: true }
+      );
+    } else if (role === "teacher") {
+      updatedNotifications = await Notification.updateMany(
+        { isViewedTeacher: false },
+        { isViewedTeacher: true },
+        { new: true }
+      );
+    } else if (role === "student") {
+      updatedNotifications = await Notification.updateMany(
+        { isViewedStudent: false },
+        { isViewedStudent: true },
+        { new: true }
+      );
+    }
+
+    res.status(200).json(updatedNotifications);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }

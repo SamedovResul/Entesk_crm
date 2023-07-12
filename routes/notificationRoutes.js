@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  doAsNotificationsSeen,
   getNotificationsForAdmin,
   getNotificationsForStudent,
   getNotificationsForTeacher,
@@ -11,5 +12,6 @@ const router = express.Router();
 router.get("/admin", authMiddleware, getNotificationsForAdmin);
 router.get("/teacher", authMiddleware, getNotificationsForTeacher);
 router.get("/student", authMiddleware, getNotificationsForStudent);
+router.patch("/viewed", authMiddleware, doAsNotificationsSeen);
 
 export default router;
