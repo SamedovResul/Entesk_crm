@@ -154,13 +154,7 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
 
     let lessons;
 
-    if (role === "student") {
-      lessons = await Lesson.find(filterObj, {
-        students: { $elemMatch: { student: id } },
-      })
-        .populate("teacher course students.student")
-        .select("day date time role status note task createdDate");
-    } else if (studentId) {
+    if (studentId || role === "student") {
       lessons = await Lesson.find(filterObj, {
         students: { $elemMatch: { student: studentId } },
       })
