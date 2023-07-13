@@ -48,6 +48,7 @@ app.get("/", (req, res) => {
   res.send("salam");
 });
 
+createNotificationForBirthday();
 mongoose
   .connect(uri)
   .then(() => {

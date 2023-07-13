@@ -114,7 +114,7 @@ export const getNotificationsForStudent = async (req, res) => {
   try {
     const notifications = await Notification.find({
       role: { $in: ["count", "update-student-table"] },
-      _id: id,
+      student: id,
     });
 
     res.status(200).json(notifications);
