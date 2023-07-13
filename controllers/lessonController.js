@@ -8,6 +8,7 @@ import {
 // Create lesson
 export const createLesson = async (req, res) => {
   const { role } = req.user;
+  console.log("salam necəsən");
 
   try {
     const teacher = await Teacher.findById(req.body.teacher);

@@ -7,7 +7,15 @@ export const getProfileImage = async (req, res) => {
   try {
     const profileImage = await ProfileImage.find({ userId: id });
 
-    res.status(200).json(profileImage);
+    const base64Image = Buffer.from(profileImage?.profileImage).toString(
+      "base64"
+    );
+
+    const objProfileImage = profileImage.toObject();
+
+    objProfileImage.profileImage = base64Image;
+
+    res.status(200).json(objProfileImage);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }

@@ -354,6 +354,7 @@ const getWeeksBetweenDates = (start, end) => {
     endWeek.setDate(endWeek.getDate() + 7);
   }
 
+  weeksList.at(-1).endWeek = endDate.toString();
   console.log(weeksList);
 };
 
