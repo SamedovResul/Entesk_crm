@@ -19,12 +19,13 @@ export const uploadProfileImage = async (req, res) => {
   const { profileImage } = req.body;
 
   try {
-    const userImage = await ProfileImage.find({ userId: id });
+    const userImage = await ProfileImage.find({ userId: id }).select("userId");
     const buffer = Buffer.from(profileImage, "base64");
     let newProfileImage;
-    if (userImage) {
+
+    if (userImage[0]) {
       newProfileImage = await ProfileImage.findByIdAndUpdate(
-        userImage._id,
+        userImage[0]._id,
         {
           profileImage: buffer,
         },
@@ -37,7 +38,7 @@ export const uploadProfileImage = async (req, res) => {
       });
     }
 
-    const base64Image = Buffer.from(newProfileImage.profileImage).toString(
+    const base64Image = Buffer.from(newProfileImage?.profileImage).toString(
       "base64"
     );
 
