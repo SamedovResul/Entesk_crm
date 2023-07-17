@@ -5,6 +5,7 @@ import {
   deleteTeacher,
   getTeacher,
   getTeachers,
+  getTeachersForPagination,
   updateTeacher,
   updateTeacherPassword,
 } from "../controllers/teacherController.js";
@@ -12,6 +13,7 @@ import {
 const router = express.Router();
 
 router.get("/", authMiddleware, getTeachers);
+router.get("/pagination", authMiddleware, getTeachersForPagination);
 router.get("/:id", authMiddleware, getTeacher);
 router.patch("/:id", authMiddleware, updateTeacher);
 router.delete("/:id", authMiddleware, deleteTeacher);

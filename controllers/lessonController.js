@@ -1,8 +1,10 @@
 import { Lesson } from "../models/lessonModel.js";
+import { Student } from "../models/studentModel.js";
 import { Teacher } from "../models/teacherModel.js";
 import {
   createNotificationForLessonsCount,
   createNotificationForUpdate,
+  deleteNotificationForLessonCount,
 } from "./notificationController.js";
 
 // Create lesson
@@ -231,12 +233,25 @@ export const updateLessonInMainPanel = async (req, res) => {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    if (
-      role === "admin" &&
-      req.body.status === "confirmed" &&
-      lesson.status !== "confirmed"
-    ) {
-      createNotificationForLessonsCount(updatedLesson);
+    if (role === "admin" && req.body.status !== lesson.status) {
+      const students = updatedLesson.students.map((item) => item.student._id);
+      if (req.body.status === "confirmed") {
+        await Student.updateMany(
+          { _id: { $in: students } },
+          { $inc: { lessonAmount: -1 } }
+        );
+
+        const updatedStudents = await Student.find({ _id: { $in: students } });
+
+        createNotificationForLessonsCount(updatedStudents);
+      } else if (lesson.status === "confirmed") {
+        await Student.updateMany(
+          { _id: { $in: students } },
+          { $inc: { lessonAmount: 1 } }
+        );
+
+        deleteNotificationForLessonCount(students);
+      }
     }
 
     res.status(200).json(updatedLesson);
@@ -274,7 +289,6 @@ export const deleteLessonInTablePanel = async (req, res) => {
 export const deleteLessonInMainPanel = async (req, res) => {
   const { id } = req.params;
 
-  console.log("salam");
   try {
     const deletedLesson = await Lesson.findByIdAndDelete(id);
 
