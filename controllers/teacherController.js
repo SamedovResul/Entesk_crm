@@ -30,7 +30,7 @@ export const getTeachersForPagination = async (req, res) => {
       })
         .skip((page - 1) * limit)
         .limit(limit)
-        .populate("course");
+        .populate("courses");
 
       totalPages = Math.ceil(teachers.length / limit);
     } else {
@@ -38,7 +38,7 @@ export const getTeachersForPagination = async (req, res) => {
       teachers = await Teacher.find()
         .skip((page - 1) * limit)
         .limit(limit)
-        .populate("course");
+        .populate("courses");
     }
 
     res.status(200).json({ teachers, totalPages });
