@@ -12,6 +12,46 @@ export const getStudents = async (req, res) => {
   }
 };
 
+// Get students for pagination
+export const getStudentsForPagination = async (req, res) => {
+  const { searchQuery } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+
+  try {
+    let totalPages;
+    let students;
+
+    if (searchQuery && searchQuery.trim() !== "") {
+      const regexSearchQuery = new RegExp(searchQuery, "i");
+
+      const allStudents = await Student.find({
+        fullName: { $regex: regexSearchQuery },
+      });
+
+      students = await Student.find({
+        fullName: { $regex: regexSearchQuery },
+      })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("courses");
+
+      totalPages = Math.ceil(allStudents.length / limit);
+    } else {
+      const studentCount = await Student.countDocuments();
+      totalPages = Math.ceil(studentCount / limit);
+      students = await Student.find()
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("courses");
+    }
+
+    res.status(200).json({ students, totalPages });
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
 // Get Student
 export const getStudent = async (req, res) => {
   const { id } = req.user;
@@ -153,5 +193,3 @@ export const updateStudentPassword = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
-

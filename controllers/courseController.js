@@ -11,6 +11,44 @@ export const getCourses = async (req, res) => {
   }
 };
 
+// Get courses for pagination
+export const getCoursesForPagination = async (req, res) => {
+  const { searchQuery } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+
+  try {
+    let totalPages;
+    let courses;
+
+    if (searchQuery && searchQuery.trim() !== "") {
+      const regexSearchQuery = new RegExp(searchQuery, "i");
+
+      const allCourses = await Course.find({
+        fullName: { $regex: regexSearchQuery },
+      });
+
+      courses = await Course.find({
+        fullName: { $regex: regexSearchQuery },
+      })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      totalPages = Math.ceil(allCourses.length / limit);
+    } else {
+      const courseCount = await Course.countDocuments();
+      totalPages = Math.ceil(courseCount / limit);
+      courses = await Course.find()
+        .skip((page - 1) * limit)
+        .limit(limit);
+    }
+
+    res.status(200).json({ courses, totalPages });
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
 // Create course
 export const createCourse = async (req, res) => {
   const { name } = req.body;
