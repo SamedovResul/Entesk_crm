@@ -25,6 +25,10 @@ export const getTeachersForPagination = async (req, res) => {
     if (searchQuery && searchQuery.trim() !== "") {
       const regexSearchQuery = new RegExp(searchQuery, "i");
 
+      const allTeachers = await Teacher.find({
+        fullName: { $regex: regexSearchQuery },
+      });
+
       teachers = await Teacher.find({
         fullName: { $regex: regexSearchQuery },
       })
@@ -32,7 +36,7 @@ export const getTeachersForPagination = async (req, res) => {
         .limit(limit)
         .populate("courses");
 
-      totalPages = Math.ceil(teachers.length / limit);
+      totalPages = Math.ceil(allTeachers.length / limit);
     } else {
       const teacherCount = await Teacher.countDocuments();
       totalPages = Math.ceil(teacherCount / limit);
