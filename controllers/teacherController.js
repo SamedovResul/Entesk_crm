@@ -34,7 +34,8 @@ export const getTeachersForPagination = async (req, res) => {
 
       totalPages = Math.ceil(teachers.length / limit);
     } else {
-      totalPages = await Teacher.countDocuments();
+      const teacherCount = await Teacher.countDocuments();
+      totalPages = Math.ceil(teacherCount / limit);
       teachers = await Teacher.find()
         .skip((page - 1) * limit)
         .limit(limit)
