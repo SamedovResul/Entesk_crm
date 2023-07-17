@@ -35,6 +35,11 @@ const teacherSchema = new Schema(
       type: String,
       default: "teacher",
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      index: true,
+    },
   },
   { timestamps: true }
 );
