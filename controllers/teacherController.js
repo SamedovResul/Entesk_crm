@@ -25,24 +25,20 @@ export const getTeachersForPagination = async (req, res) => {
     if (searchQuery && searchQuery.trim() !== "") {
       const regexSearchQuery = new RegExp(searchQuery, "i");
 
-      teachers = await Teacher.aggregate(
-        {
-          $skip: (page - 1) * limit,
-          $match: { fullName: { $regex: regexSearchQuery } },
-        },
-        { $limit: limit }
-      );
+      teachers = await Teacher.find({
+        fullName: { $regex: regexSearchQuery },
+      })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("course");
 
       totalPages = Math.ceil(teachers.length / limit);
     } else {
       totalPages = await Teacher.countDocuments();
-
-      teachers = await Teacher.aggregate([
-        {
-          $skip: (page - 1) * limit,
-        },
-        { $limit: limit },
-      ]);
+      teachers = await Teacher.find()
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("course");
     }
 
     res.status(200).json({ teachers, totalPages });
