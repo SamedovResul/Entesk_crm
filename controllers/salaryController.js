@@ -5,6 +5,8 @@ import { Teacher } from "../models/teacherModel.js";
 
 export const getSalaries = async (req, res) => {
   const { teacherId, startDate, endDate } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
 
   const filterObj = {
     status: { $ne: "unviewed" },
@@ -26,14 +28,17 @@ export const getSalaries = async (req, res) => {
     let teachers;
 
     if (teacherId) {
-      teachers = await Teacher.find({ _id: teacherId });
+      teachers = await Teacher.findById(teacherId);
     } else {
-      teachers = await Teacher.find();
+      teachers = await Teacher.find()
+        .sort({ _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
     }
 
     const response = teachers.map((teacher) => {
       const teacherLessons = lessons.filter(
-        (lesson) => lesson.teacher == teacher._id
+        (lesson) => lesson.teacher.toString() == teacher._id.toString()
       );
 
       const confirmed = teacherLessons.filter(
@@ -44,18 +49,16 @@ export const getSalaries = async (req, res) => {
         (lesson) => lesson.status === "cancelled"
       );
 
-      const participantCount = confirmed.reduce(
-        (total, current) =>
-          (total += current.students.filter(
-            (item) => item.attended === 1
-          ).length),
-        0
-      );
+      const participantCount = confirmed.reduce((total, current) => {
+        return (total += current.students.filter(
+          (item) => item.attendance === 1
+        ).length);
+      }, 0);
 
       const total = confirmed.reduce(
         (total, current) =>
           (total +=
-            current.students.filter((item) => item.attended === 1).length *
+            current.students.filter((item) => item.attendance === 1).length *
             current.salary),
         0
       );

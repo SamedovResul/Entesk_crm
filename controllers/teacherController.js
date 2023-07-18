@@ -32,6 +32,7 @@ export const getTeachersForPagination = async (req, res) => {
       teachers = await Teacher.find({
         fullName: { $regex: regexSearchQuery },
       })
+        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");
@@ -41,6 +42,7 @@ export const getTeachersForPagination = async (req, res) => {
       const teacherCount = await Teacher.countDocuments();
       totalPages = Math.ceil(teacherCount / limit);
       teachers = await Teacher.find()
+        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");

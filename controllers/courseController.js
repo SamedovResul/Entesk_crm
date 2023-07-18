@@ -31,6 +31,7 @@ export const getCoursesForPagination = async (req, res) => {
       courses = await Course.find({
         fullName: { $regex: regexSearchQuery },
       })
+        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
 
@@ -39,6 +40,7 @@ export const getCoursesForPagination = async (req, res) => {
       const courseCount = await Course.countDocuments();
       totalPages = Math.ceil(courseCount / limit);
       courses = await Course.find()
+        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
     }

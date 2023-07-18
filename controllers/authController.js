@@ -47,7 +47,7 @@ export const registerStudent = async (req, res) => {
     const existingAdmin = await Admin.findOne({ email });
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-
+    console.log("999999999933333333333");
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(400)
@@ -128,6 +128,7 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // const isPasswordValid = await bcrypt.compare(password, user.password); ---- right
     const isPasswordValid = bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
