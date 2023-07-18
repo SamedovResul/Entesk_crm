@@ -213,7 +213,7 @@ const createAccessToken = (user) => {
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "6h" }
+    { expiresIn: "30m" }
   );
   return AccessToken;
 };
@@ -357,7 +357,6 @@ const getWeeksBetweenDates = (start, end) => {
   }
 
   weeksList.at(-1).endWeek = endDate.toString();
-  console.log(weeksList);
 };
 
 getWeeksBetweenDates("2023-07-04", "2023-08-18");
