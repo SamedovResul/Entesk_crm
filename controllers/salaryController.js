@@ -21,6 +21,18 @@ export const getSalaries = async (req, res) => {
       $gte: new Date(startDate),
       $lte: new Date(endDate),
     };
+  } else {
+    const startOfMonth = new Date();
+    const endOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+    endOfMonth.setDate(0);
+    endOfMonth.setHours(23, 59, 59, 999);
+    filterObj.date = {
+      $gte: startOfMonth,
+      $lte: endOfMonth,
+    };
   }
 
   try {
@@ -90,3 +102,11 @@ export const getSalaries = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
+
+// const startOfMonth = new Date();
+// const endOfMonth = new Date();
+// startOfMonth.setDate(1);
+// startOfMonth.setHours(0, 0, 0, 0);
+// endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+// endOfMonth.setDate(0);
+// endOfMonth.setHours(23, 59, 59, 999);

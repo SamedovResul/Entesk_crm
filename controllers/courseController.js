@@ -25,11 +25,11 @@ export const getCoursesForPagination = async (req, res) => {
       const regexSearchQuery = new RegExp(searchQuery, "i");
 
       const allCourses = await Course.find({
-        fullName: { $regex: regexSearchQuery },
+        name: { $regex: regexSearchQuery },
       });
 
       courses = await Course.find({
-        fullName: { $regex: regexSearchQuery },
+        name: { $regex: regexSearchQuery },
       })
         .sort({ _id: -1 })
         .skip((page - 1) * limit)
