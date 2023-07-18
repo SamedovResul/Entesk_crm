@@ -26,16 +26,26 @@ export const getSalaries = async (req, res) => {
   try {
     const lessons = await Lesson.find(filterObj);
     let teachers;
+    let totalPage;
 
     if (teacherId) {
       teachers = await Teacher.findById(teacherId);
+      totalPage = 1;
     } else {
       const regexSearchQuery = new RegExp(searchQuery, "i");
 
-      teachers = await Teacher.find({ fullName: { $regex: regexSearchQuery } })
+      const teachersCount = await Teacher.countDocuments({
+        fullName: { $regex: regexSearchQuery },
+      });
+
+      teachers = await Teacher.find({
+        fullName: { $regex: regexSearchQuery },
+      })
         .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
+
+      totalPage = Math.ceil(teachersCount / limit);
     }
 
     const response = teachers.map((teacher) => {
@@ -75,7 +85,7 @@ export const getSalaries = async (req, res) => {
       };
     });
 
-    const totalPage = Math.ceil(teachers.length / limit);
+    totalPage = Math.ceil(teachers.length / limit);
 
     res.status(200).json({ salariesData: response, totalPage });
   } catch (err) {
