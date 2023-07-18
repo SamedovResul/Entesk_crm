@@ -29,7 +29,7 @@ export const getSalaries = async (req, res) => {
     let totalPage;
 
     if (teacherId) {
-      teachers = await Teacher.findById(teacherId);
+      teachers = await Teacher.find({ _id: teacherId });
       totalPage = 1;
     } else {
       const regexSearchQuery = new RegExp(searchQuery, "i");
@@ -84,7 +84,6 @@ export const getSalaries = async (req, res) => {
         total: total,
       };
     });
-
 
     res.status(200).json({ salariesData: response, totalPage });
   } catch (err) {
