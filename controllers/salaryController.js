@@ -4,7 +4,7 @@ import { Teacher } from "../models/teacherModel.js";
 // Get salaries
 
 export const getSalaries = async (req, res) => {
-  const { teacherId, startDate, endDate } = req.query;
+  const { teacherId, startDate, endDate, searchQuery } = req.query;
   const page = parseInt(req.query.page) || 1;
   const limit = 10;
 
@@ -30,7 +30,9 @@ export const getSalaries = async (req, res) => {
     if (teacherId) {
       teachers = await Teacher.findById(teacherId);
     } else {
-      teachers = await Teacher.find()
+      const regexSearchQuery = new RegExp(searchQuery, "i");
+
+      teachers = await Teacher.find({ fullName: { $regex: regexSearchQuery } })
         .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
@@ -73,7 +75,9 @@ export const getSalaries = async (req, res) => {
       };
     });
 
-    res.status(200).json(response);
+    const totalPage = Math.ceil(teachers.length / limit);
+
+    res.status(200).json({ salariesData: response, totalPage });
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
