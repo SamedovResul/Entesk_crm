@@ -85,7 +85,6 @@ export const getSalaries = async (req, res) => {
       };
     });
 
-    totalPage = Math.ceil(teachers.length / limit);
 
     res.status(200).json({ salariesData: response, totalPage });
   } catch (err) {
