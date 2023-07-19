@@ -1,6 +1,7 @@
 import { Lesson } from "../models/lessonModel.js";
 import { Student } from "../models/studentModel.js";
 import bcrypt from "bcrypt";
+import { createNotificationForLessonsCount } from "./notificationController.js";
 
 // Get students
 export const getStudents = async (req, res) => {
@@ -124,13 +125,19 @@ export const updateStudent = async (req, res) => {
       updatedData = { ...updatedData, password: hashedPassword };
     }
 
+    const student = await Student.findById(id);
+
     const updatedStudent = await Student.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
     }).populate("courses");
 
-    if (!updateStudent) {
+    if (!updatedStudent) {
       return res.status(404).json({ message: "Student not found" });
+    }
+
+    if (student.lessonAmount !== 0 && updatedStudent.lessonAmount === 0) {
+      createNotificationForLessonsCount([updatedStudent]);
     }
 
     res.status(200).json(updatedStudent);
