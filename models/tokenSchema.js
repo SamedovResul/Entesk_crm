@@ -19,6 +19,4 @@ const tokenSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-tokenSchema.index({ createdAt: -1 });
-
 export const Token = mongoose.model("Token", tokenSchema);
