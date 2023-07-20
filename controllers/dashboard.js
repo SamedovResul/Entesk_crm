@@ -17,10 +17,6 @@ export const getDahsboardData = async (req, res) => {
     const confirmedLessons = await Lesson.find({ status: "confirmed" });
     const confirmedLessonsOfMonth = await Lesson.find({
       status: "confirmed",
-      //   date: {
-      //     $gte: startOfMonth,
-      //     $lte: endOfMonth,
-      //   },
     });
     const cancelledLessons = await Lesson.find({ status: "cancelled" });
 
@@ -37,6 +33,10 @@ export const getDahsboardData = async (req, res) => {
       status: true,
       sector: "RU",
     });
+
+    // get teachers count
+
+    const teachersCount = await Teacher.countDocuments();
 
     // get students count for where coming
     const studentsCountFromInstagram = await Student.countDocuments({
@@ -127,14 +127,11 @@ export const getDahsboardData = async (req, res) => {
       topTeachers,
       studentsCountByWhereComing,
       coursesInfo,
+      teachersCount,
     };
-
-    console.log(result);
 
     res.status(200).json(result);
   } catch (err) {
-    // res.status(500).json({ message: { error: err.message } });
+    res.status(500).json({ message: { error: err.message } });
   }
 };
-
-getDahsboardData();

@@ -167,7 +167,7 @@ export const changeForgottenPassword = async (req, res) => {
     const user = admin || student || teacher;
 
     if (!user) {
-      res.status(404).json({ key: "User is not found" });
+      return res.status(404).json({ key: "User is not found" });
     }
 
     let randomCode = Math.floor(100000 + Math.random() * 900000).toString();
