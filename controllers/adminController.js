@@ -1,6 +1,7 @@
 import { Admin } from "../models/adminModel.js";
 import bcrypt from "bcrypt";
 
+
 // Get admin
 export const getAdmin = async (req, res) => {
   const { id } = req.user;
@@ -75,5 +76,3 @@ export const updateAdminPasswordWithoutCheckingOldPassword = async (
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
-

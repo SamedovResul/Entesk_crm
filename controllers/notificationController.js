@@ -55,19 +55,21 @@ export const createNotificationForUpdate = async (teacherId, students) => {
 };
 
 // Create notification for lesson count
-export const createNotificationForLessonsCount = async (lesson) => {
+export const createNotificationForLessonsCount = async (students) => {
   try {
-    const completedCourseStudents = lesson.students.filter(
-      (item) => item.student.lessonAmount === 0
+    const completedCourseStudents = students.filter(
+      (student) => student.lessonAmount === 0
     );
 
-    completedCourseStudents.map(async (item) => {
+    completedCourseStudents.map(async (student) => {
       await Notification.create({
         role: "count",
-        student: item.student._id,
+        student: student._id,
         isZeroClassCount: true,
       });
     });
+
+    console.log("success create");
   } catch (err) {
     console.log({ message: { error: err.message } });
   }
@@ -120,6 +122,34 @@ export const getNotificationsForStudent = async (req, res) => {
     res.status(200).json(notifications);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// DELETE NOTIFICATIONS
+
+// Delete notification for lesson count
+export const deleteNotificationForLessonCount = async (students) => {
+  console.log(students);
+  try {
+    await Notification.deleteMany({
+      student: { $in: students },
+      role: "count",
+    });
+    console.log("success");
+  } catch (err) {
+    console.log({ message: { error: err.message } });
+  }
+};
+
+// delete notification for update table
+
+export const deleteNotificationForUpdateTable = async () => {
+  try {
+    await Notification.deleteMany({
+      isUpdatedTable: true,
+    });
+  } catch (err) {
+    console.log({ message: { error: err.message } });
   }
 };
 

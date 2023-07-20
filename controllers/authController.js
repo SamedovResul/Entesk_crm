@@ -47,7 +47,7 @@ export const registerStudent = async (req, res) => {
     const existingAdmin = await Admin.findOne({ email });
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-
+    console.log("999999999933333333333");
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(400)
@@ -131,6 +131,7 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // const isPasswordValid = await bcrypt.compare(password, user.password); ---- right
 
     if (!isPasswordValid) {
       return res.status(404).json({ message: "Invalid password" });
@@ -298,65 +299,66 @@ export const getUser = async (req, res) => {
   }
 };
 
-const getWeeksBetweenDates = (start, end) => {
-  let weeksList = [];
+// const getWeeksBetweenDates = (start, end) => {
+//   let weeksList = [];
 
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+//   const startDate = new Date(start);
+//   const endDate = new Date(end);
 
-  let startWeek = new Date(startDate);
-  let endWeek = new Date(startDate);
+//   let startWeek = new Date(startDate);
+//   let endWeek = new Date(startDate);
 
-  if (endWeek.getDay() > 0) {
-    endWeek.setDate(startDate.getDate() + (7 - startDate.getDay()));
-  }
+//   if (endWeek.getDay() > 0) {
+//     endWeek.setDate(startDate.getDate() + (7 - startDate.getDay()));
+//   }
 
-  const lastWeekEndDay = new Date(endDate);
+//   const lastWeekEndDay = new Date(endDate);
 
-  if (lastWeekEndDay.getDay() > 0) {
-    lastWeekEndDay.setDate(
-      lastWeekEndDay.getDate() + (7 - lastWeekEndDay.getDay())
-    );
-  }
-  lastWeekEndDay.setDate(lastWeekEndDay.getDate() + 1);
+//   if (lastWeekEndDay.getDay() > 0) {
+//     lastWeekEndDay.setDate(
+//       lastWeekEndDay.getDate() + (7 - lastWeekEndDay.getDay())
+//     );
+//   }
+//   lastWeekEndDay.setDate(lastWeekEndDay.getDate() + 1);
 
-  while (lastWeekEndDay > endWeek) {
-    weeksList.push({
-      startWeek: startWeek.toString(),
-      endWeek: endWeek.toString(),
-      allWeekDays: {
-        monday: new Date(
-          new Date(endWeek).setDate(endWeek.getDate() - 6)
-        ).toString(),
-        tuesday: new Date(
-          new Date(endWeek).setDate(endWeek.getDate() - 5)
-        ).toString(),
-        wednesday: new Date(
-          new Date(endWeek).setDate(endWeek.getDate() - 4)
-        ).toString(),
-        thursday: new Date(
-          new Date(endWeek).setDate(endWeek.getDate() - 3)
-        ).toString(),
-        friday: new Date(
-          new Date(endWeek).setDate(endWeek.getDate() - 2)
-        ).toString(),
-        saturday: new Date(
-          new Date(endWeek).setDate(endWeek.getDate() - 1)
-        ).toString(),
-        sunday: endWeek.toString(),
-      },
-    });
+//   while (lastWeekEndDay > endWeek) {
+//     weeksList.push({
+//       startWeek: startWeek.toString(),
+//       endWeek: endWeek.toString(),
+//       allWeekDays: {
+//         monday: new Date(
+//           new Date(endWeek).setDate(endWeek.getDate() - 6)
+//         ).toString(),
+//         tuesday: new Date(
+//           new Date(endWeek).setDate(endWeek.getDate() - 5)
+//         ).toString(),
+//         wednesday: new Date(
+//           new Date(endWeek).setDate(endWeek.getDate() - 4)
+//         ).toString(),
+//         thursday: new Date(
+//           new Date(endWeek).setDate(endWeek.getDate() - 3)
+//         ).toString(),
+//         friday: new Date(
+//           new Date(endWeek).setDate(endWeek.getDate() - 2)
+//         ).toString(),
+//         saturday: new Date(
+//           new Date(endWeek).setDate(endWeek.getDate() - 1)
+//         ).toString(),
+//         sunday: endWeek.toString(),
+//       },
+//     });
 
-    if (startWeek.getDay() === 0) {
-      startWeek.setDate(startWeek.getDate() + 1);
-    } else {
-      startWeek.setDate(startWeek.getDate() + (8 - startWeek.getDay()));
-    }
+//     if (startWeek.getDay() === 0) {
+//       startWeek.setDate(startWeek.getDate() + 1);
+//     } else {
+//       startWeek.setDate(startWeek.getDate() + (8 - startWeek.getDay()));
+//     }
 
-    endWeek.setDate(endWeek.getDate() + 7);
-  }
+//     endWeek.setDate(endWeek.getDate() + 7);
+//   }
 
-  weeksList.at(-1).endWeek = endDate.toString();
-};
+//   weeksList.at(-1).endWeek = endDate.toString();
+//   console.log(weeksList);
+// };
 
-getWeeksBetweenDates("2023-07-04", "2023-08-18");
+// getWeeksBetweenDates("2023-07-04", "2023-08-18");

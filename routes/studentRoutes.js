@@ -6,12 +6,14 @@ import {
   getStudent,
   updateStudentPassword,
   getStudentsByCourseId,
+  getStudentsForPagination,
 } from "../controllers/studentController.js";
 import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.get("/", authMiddleware, getStudents);
+router.get("/pagination", authMiddleware, getStudentsForPagination);
 router.get("/:id", authMiddleware, getStudent);
 router.get("/by/course", getStudentsByCourseId);
 router.patch("/:id", authMiddleware, updateStudent);
