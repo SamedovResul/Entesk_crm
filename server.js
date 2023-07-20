@@ -12,9 +12,11 @@ import lessonRoutes from "./routes/lessonRotes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import salaryRoutes from "./routes/salaryRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import dashboardRoutes from "./routes/dashboard.js";
 import { createNotificationForBirthday } from "./controllers/notificationController.js";
 
 import cron from "node-cron";
+import { getDahsboardData } from "./controllers/dashboard.js";
 
 dotenv.config();
 
@@ -43,12 +45,12 @@ app.use("/api/lesson", lessonRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/salary", salaryRoutes);
 app.use("/api/user/profile", profileRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("salam");
 });
 
-createNotificationForBirthday();
 mongoose
   .connect(uri)
   .then(() => {

@@ -52,6 +52,11 @@ const studentSchema = new Schema(
         ref: "Course",
       },
     ],
+    whereComing: {
+      type: String,
+      enum: ["instagram", "referral", "event", "externalAds", "other"],
+      default: "other",
+    },
     status: {
       type: Boolean,
       default: true,
