@@ -16,7 +16,6 @@ import dashboardRoutes from "./routes/dashboard.js";
 import { createNotificationForBirthday } from "./controllers/notificationController.js";
 
 import cron from "node-cron";
-import { getDahsboardData } from "./controllers/dashboard.js";
 
 dotenv.config();
 
@@ -27,10 +26,9 @@ const uri = process.env.DB_URI;
 app.use(
   cors({
     origin: "*",
-    credentials: true,
     methods: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-    exposedHeaders: ["Content-Type"],
+    optionSuccessStatus: 200,
   })
 );
 
