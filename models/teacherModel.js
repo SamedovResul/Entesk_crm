@@ -35,6 +35,7 @@ const teacherSchema = new Schema(
       type: String,
       default: "teacher",
     },
+    otp: Number,
   },
   { timestamps: true }
 );

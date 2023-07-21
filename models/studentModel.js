@@ -61,6 +61,7 @@ const studentSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    otp: Number,
   },
   { timestamps: true }
 );
