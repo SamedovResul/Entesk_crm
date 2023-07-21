@@ -75,6 +75,10 @@ export const getDahsboardData = async (req, res) => {
       return (total += curr?.earnings || 0);
     }, 0);
 
+    const lostMoney = cancelledLessons.reduce((total, curr) => {
+      return (total += curr?.earnings || 0);
+    }, 0);
+
     const obj = {};
 
     confirmedLessonsOfMonth.forEach((lesson) => {
@@ -128,10 +132,15 @@ export const getDahsboardData = async (req, res) => {
       studentsCountByWhereComing,
       coursesInfo,
       teachersCount,
+      lostMoney,
     };
+
+    console.log(result);
 
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }
 };
+
+getDahsboardData();

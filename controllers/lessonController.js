@@ -198,6 +198,17 @@ export const updateLessonInTable = async (req, res) => {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
+    const earnings = updatedLesson.students.reduce((total, curr) => {
+      if (curr.attendance === 1) {
+        return (total += curr.student.payment);
+      } else {
+        return total;
+      }
+    });
+
+    updatedLesson.earnings = earnings;
+    await updatedLesson.save();
+
     if (updatedLesson.role === "current" && role === "admin") {
       createNotificationForUpdate(
         updatedLesson.teacher._id,
@@ -232,6 +243,17 @@ export const updateLessonInMainPanel = async (req, res) => {
     if (!updatedLesson) {
       return res.status(404).json({ message: "Lesson not found" });
     }
+
+    const earnings = updatedLesson.students.reduce((total, curr) => {
+      if (curr.attendance === 1) {
+        return (total += curr.student.payment);
+      } else {
+        return total;
+      }
+    });
+
+    updatedLesson.earnings = earnings;
+    await updatedLesson.save();
 
     if (role === "admin" && req.body.status !== lesson.status) {
       const students = updatedLesson.students.map((item) => item.student._id);

@@ -208,8 +208,9 @@ export const sendCodeToEmail = async (req, res) => {
     await user.save();
 
     setTimeout(async () => {
+      console.log("salam set time out");
       user.otp = 0;
-      await user.save;
+      await user.save();
     }, 120000);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
