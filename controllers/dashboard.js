@@ -142,5 +142,3 @@ export const getDahsboardData = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
-getDahsboardData();

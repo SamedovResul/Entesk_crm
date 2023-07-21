@@ -25,8 +25,8 @@ const uri = process.env.DB_URI;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE"],
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     exposedHeaders: ["Content-Type"],
   })
