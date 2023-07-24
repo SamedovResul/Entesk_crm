@@ -25,7 +25,8 @@ const uri = process.env.DB_URI;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin:
+      "https://64be96edbeaef00dfeee5b2e--calm-snickerdoodle-60e063.netlify.app",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     exposedHeaders: ["Content-Type"],
