@@ -93,22 +93,31 @@ export const getDahsboardData = async (req, res) => {
 
     const sortedData = Object.entries(obj).sort((a, b) => b[1] - a[1]);
 
-    const firstTeacher = await Teacher.findById(sortedData[0][0]);
-    const secondTeacher = await Teacher.findById(sortedData[1][0]);
-    const thirdTeacher = await Teacher.findById(sortedData[2][0]);
+    const firstTeacher = await Teacher.findById(
+      sortedData[0] && sortedData[0][0]
+    );
+    console.log(1);
+    const secondTeacher = await Teacher.findById(
+      sortedData[1] && sortedData[1][0]
+    );
+    console.log(2);
+    const thirdTeacher = await Teacher.findById(
+      sortedData[2] && sortedData[2][0]
+    );
+    console.log(3);
 
     const topTeachers = {
       first: {
         teacher: firstTeacher,
-        studentsCount: sortedData[0][1],
+        studentsCount: sortedData[0] && sortedData[0][1],
       },
       second: {
         teacher: secondTeacher,
-        studentsCount: sortedData[1][1],
+        studentsCount: sortedData[1] && sortedData[1][1],
       },
       third: {
         teacher: thirdTeacher,
-        studentsCount: sortedData[2][1],
+        studentsCount: sortedData[2] && sortedData[2][1],
       },
     };
 
