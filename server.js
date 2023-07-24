@@ -25,7 +25,7 @@ const uri = process.env.DB_URI;
 
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     exposedHeaders: ["Content-Type"],
@@ -55,9 +55,9 @@ mongoose
     console.log("connected database");
     app.listen(port, () => {
       console.log(`listen server at ${port}`);
-      // cron.schedule("0 9 * * *", () => {
-      //   createNotificationForBirthday();
-      // });
+      cron.schedule("0 9 * * *", () => {
+        createNotificationForBirthday();
+      });
     });
   })
   .catch((err) => console.log(err));
