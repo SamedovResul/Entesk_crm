@@ -204,7 +204,7 @@ export const updateLessonInTable = async (req, res) => {
       } else {
         return total;
       }
-    });
+    }, 0);
 
     updatedLesson.earnings = earnings;
     await updatedLesson.save();
@@ -250,7 +250,7 @@ export const updateLessonInMainPanel = async (req, res) => {
       } else {
         return total;
       }
-    });
+    }, 0);
 
     updatedLesson.earnings = earnings;
     await updatedLesson.save();
