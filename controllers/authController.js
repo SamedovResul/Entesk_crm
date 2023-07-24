@@ -117,6 +117,7 @@ export const registerTeacher = async (req, res) => {
 // Login
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const admin = await Admin.findOne({ email });
     const student = await Student.findOne({ email });
