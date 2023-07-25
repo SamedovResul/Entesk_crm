@@ -53,7 +53,6 @@ export const getSalaries = async (req, res) => {
       teachers = await Teacher.find({
         fullName: { $regex: regexSearchQuery },
       })
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
 

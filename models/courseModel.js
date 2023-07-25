@@ -8,7 +8,6 @@ const courseSchema = new Schema(
       type: String,
       require: true,
     },
-    category: { type: Array },
     students: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
@@ -20,6 +19,5 @@ const courseSchema = new Schema(
   },
   { timestamps: true }
 );
-
 
 export const Course = mongoose.model("Course", courseSchema);

@@ -33,7 +33,6 @@ export const getStudentsForPagination = async (req, res) => {
       students = await Student.find({
         fullName: { $regex: regexSearchQuery },
       })
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");
@@ -43,7 +42,6 @@ export const getStudentsForPagination = async (req, res) => {
       const studentCount = await Student.countDocuments();
       totalPages = Math.ceil(studentCount / limit);
       students = await Student.find()
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");

@@ -152,18 +152,20 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
     }
 
     if (attendance === "present") {
-      filterObj["students.attendance"] = 1;
+      filterObj.students = {
+        $elemMatch: { student: studentId || id, attendance: 1 },
+      };
     } else if (attendance === "absent") {
-      filterObj["students.attendance"] = -1;
+      filterObj.students = {
+        $elemMatch: { student: studentId || id, attendance: -1 },
+      };
     }
 
     let lessons;
 
     if (studentId || role === "student") {
-      lessons = await Lesson.find(filterObj, {
-        students: { $elemMatch: { student: studentId || id } },
-      })
-        .populate("teacher course students.student")
+      lessons = await Lesson.find(filterObj)
+        .populate("teacher course students.student students.attendance")
         .select("day date time role status note task createdDate");
     } else {
       lessons = await Lesson.find(filterObj).populate(
