@@ -47,7 +47,7 @@ export const registerStudent = async (req, res) => {
     const existingAdmin = await Admin.findOne({ email });
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-    console.log("999999999933333333333");
+
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(400)
@@ -74,7 +74,10 @@ export const registerStudent = async (req, res) => {
       "courses"
     );
 
-    res.status(201).json(studentWithCourses);
+    const studentsCount = await Student.countDocuments();
+    const lastPage = Math.ceil(studentsCount / 10);
+
+    res.status(201).json({ student: studentWithCourses, lastPage });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -108,7 +111,10 @@ export const registerTeacher = async (req, res) => {
       { $addToSet: { teachers: teacher._id } }
     );
 
-    res.status(201).json(teacher);
+    const teachersCount = await Teacher.countDocuments();
+    const lastPage = Math.ceil(teachersCount / 10);
+
+    res.status(201).json({ teacher, lastPage });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -126,13 +132,13 @@ export const login = async (req, res) => {
     const user = admin || student || teacher;
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ key: "user-not-found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res.status(404).json({ message: "Invalid password" });
+      return res.status(404).json({ key: "invalid-password" });
     }
 
     // refresh and accesstoken callback for creating
