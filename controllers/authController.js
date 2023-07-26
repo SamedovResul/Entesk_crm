@@ -126,13 +126,13 @@ export const login = async (req, res) => {
     const user = admin || student || teacher;
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ key: "user-not-found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res.status(404).json({ message: "Invalid password" });
+      return res.status(404).json({ key: "invalid-password" });
     }
 
     // refresh and accesstoken callback for creating
