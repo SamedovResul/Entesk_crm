@@ -164,9 +164,18 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
     let lessons;
 
     if (studentId || role === "student") {
-      lessons = await Lesson.find(filterObj)
+      const filteredLessons = await Lesson.find(filterObj)
         .populate("teacher course students.student students.attendance")
         .select("day date time role status note task createdDate");
+
+      lessons = filteredLessons.map((lesson) => {
+        return {
+          ...lesson.toObject(),
+          students: lesson.students.filter(
+            (item) => item.student._id == (studentId || id)
+          ),
+        };
+      });
     } else {
       lessons = await Lesson.find(filterObj).populate(
         "teacher course students.student"
