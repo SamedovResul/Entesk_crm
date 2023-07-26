@@ -214,7 +214,7 @@ const createAccessToken = (user) => {
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "30m" }
+    { expiresIn: "1m" }
   );
   return AccessToken;
 };
@@ -224,7 +224,7 @@ const createRefreshToken = (user) => {
   const RefreshToken = jwt.sign(
     { email: user.email, id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: "1m" }
   );
   return RefreshToken;
 };
@@ -232,7 +232,6 @@ const createRefreshToken = (user) => {
 // verify refresh token
 export const refreshToken = async (req, res) => {
   try {
-    console.log(req.headers.cookie);
     const rf_token = req.headers.cookie.split("=")[1];
 
     const token = await Token.findOne({ refreshToken: rf_token });
@@ -240,6 +239,7 @@ export const refreshToken = async (req, res) => {
     if (token) {
       jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
+          console.log("Please Login or Register")
           revokeTokenFromDatabase(rf_token);
           return res.status(400).json({ msg: "Please Login or Register" });
         } else {
