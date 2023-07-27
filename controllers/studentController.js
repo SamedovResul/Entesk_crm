@@ -74,30 +74,36 @@ export const getStudentsByCourseId = async (req, res) => {
   const { courseId, day, time, role, date } = req.query;
 
   try {
-    const students = await Student.find({ courses: courseId });
+    const students = await Student.find({
+      courses: courseId,
+      lessonAmount: { $gt: 0 },
+    });
 
     const newStudents = await Promise.all(
       students.map(async (student) => {
         let checkStudent;
 
         if (role === "main") {
-          checkStudent = await Lesson.find({
+          checkStudent = await Lesson.findOne({
             "students.student": student._id,
             day: day,
             time: time,
             role: role,
           });
         } else if (role === "current") {
-          checkStudent = await Lesson.find({
+          checkStudent = await Lesson.findOne({
             "students.student": student._id,
             day: day,
             time: time,
             role: role,
             date: date,
+            status: {
+              $in: ["unviewed", "confirmed"],
+            },
           });
         }
-        console.log(checkStudent);
-        if (checkStudent[0]) {
+
+        if (checkStudent) {
           return { ...student.toObject(), disable: true };
         } else {
           return { ...student.toObject(), disable: false };
