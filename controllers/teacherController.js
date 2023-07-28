@@ -131,7 +131,7 @@ export const updateTeacherPassword = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Old password is incorrect." });
+      return res.status(400).json({ key: "old-password-incorrect." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
