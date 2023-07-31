@@ -74,30 +74,36 @@ export const getStudentsByCourseId = async (req, res) => {
   const { courseId, day, time, role, date } = req.query;
 
   try {
-    const students = await Student.find({ courses: courseId });
+    const students = await Student.find({
+      courses: courseId,
+      lessonAmount: { $gt: 0 },
+    });
 
     const newStudents = await Promise.all(
       students.map(async (student) => {
         let checkStudent;
 
         if (role === "main") {
-          checkStudent = await Lesson.find({
+          checkStudent = await Lesson.findOne({
             "students.student": student._id,
             day: day,
             time: time,
             role: role,
           });
         } else if (role === "current") {
-          checkStudent = await Lesson.find({
+          checkStudent = await Lesson.findOne({
             "students.student": student._id,
             day: day,
             time: time,
             role: role,
             date: date,
+            status: {
+              $in: ["unviewed", "confirmed"],
+            },
           });
         }
-        console.log(checkStudent);
-        if (checkStudent[0]) {
+
+        if (checkStudent) {
           return { ...student.toObject(), disable: true };
         } else {
           return { ...student.toObject(), disable: false };
@@ -117,6 +123,12 @@ export const updateStudent = async (req, res) => {
   let updatedData = req.body;
 
   try {
+    const existingStudent = await Student.findOne({ email: updatedData.email });
+
+    if (existingStudent && existingStudent._id != id) {
+      return res.status(400).json({ key: "email-already-exists" });
+    }
+
     if (updatedData.password) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(updatedData.password, salt);
@@ -181,7 +193,7 @@ export const updateStudentPassword = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Old password is incorrect." });
+      return res.status(400).json({ key: "old-password-incorrect." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

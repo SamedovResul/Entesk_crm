@@ -336,6 +336,7 @@ export const deleteLessonInMainPanel = async (req, res) => {
 };
 
 // Create current lessons from main lessons
+
 export const createCurrentLessonsFromMainLessons = async (req, res) => {
   try {
     const mainTableData = await Lesson.find({

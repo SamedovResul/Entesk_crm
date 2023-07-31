@@ -6,7 +6,7 @@ import { Student } from "../models/studentModel.js";
 // Create notification for birthday
 export const createNotificationForBirthday = async () => {
   const currentDate = new Date();
-  currentDate.setDate(currentDate.getDate() + 3);
+  currentDate.setDate(currentDate.getDate() + 2);
   const currentDay = currentDate.getDate();
   const currentMonth = currentDate.getMonth() + 1;
 

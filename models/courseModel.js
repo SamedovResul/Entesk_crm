@@ -7,6 +7,7 @@ const courseSchema = new Schema(
     name: {
       type: String,
       require: true,
+      unique: true,
     },
     students: {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,6 +16,10 @@ const courseSchema = new Schema(
     teachers: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Teacher",
+    },
+    status: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }

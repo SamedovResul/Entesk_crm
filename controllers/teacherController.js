@@ -74,6 +74,12 @@ export const updateTeacher = async (req, res) => {
   let updatedData = req.body;
 
   try {
+    const existingTeacher = await Teacher.findOne({ email: updatedData.email });
+
+    if (existingTeacher && existingTeacher._id != id) {
+      return res.status(400).json({ key: "email-already-exists" });
+    }
+
     if (updatedData.password) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(updatedData.password, salt);
@@ -86,7 +92,7 @@ export const updateTeacher = async (req, res) => {
     }).populate("courses");
 
     if (!updatedTeacher) {
-      return res.status(404).json({ message: "Student not found" });
+      return res.status(404).json({ message: "Teacher not found" });
     }
 
     res.status(200).json(updatedTeacher);
@@ -131,7 +137,7 @@ export const updateTeacherPassword = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Old password is incorrect." });
+      return res.status(400).json({ key: "old-password-incorrect." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

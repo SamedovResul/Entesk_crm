@@ -1,7 +1,6 @@
 import { Admin } from "../models/adminModel.js";
 import bcrypt from "bcrypt";
 
-
 // Get admin
 export const getAdmin = async (req, res) => {
   const { id } = req.user;
@@ -32,7 +31,7 @@ export const updateAdminPassword = async (req, res) => {
     const isPasswordCorrect = await bcrypt.compare(oldPassword, admin.password);
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Old password is incorrect." });
+      return res.status(400).json({ key: "old-password-incorrect." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
