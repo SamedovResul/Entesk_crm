@@ -1,5 +1,6 @@
 import { Course } from "../models/courseModel.js";
 import { Lesson } from "../models/lessonModel.js";
+import { ProfileImage } from "../models/profileImageModel.js";
 import { Student } from "../models/studentModel.js";
 import { Teacher } from "../models/teacherModel.js";
 
@@ -96,28 +97,47 @@ export const getDahsboardData = async (req, res) => {
     const firstTeacher = await Teacher.findById(
       sortedData[0] && sortedData[0][0]
     );
-    console.log(1);
     const secondTeacher = await Teacher.findById(
       sortedData[1] && sortedData[1][0]
     );
-    console.log(2);
     const thirdTeacher = await Teacher.findById(
       sortedData[2] && sortedData[2][0]
     );
-    console.log(3);
+
+    const profileImages = await ProfileImage.find({
+      userId: { $in: [firstTeacher._id, secondTeacher._id, thirdTeacher._id] },
+    });
+
+    const profileImagesObjList = profileImages.map((item) => {
+      const profileImage = Buffer.from(item?.profileImage).toString("base64");
+      return { userId: item.userId, profileImage: profileImage };
+    });
+
+    const firstProfileImage = profileImagesObjList.find(
+      (item) => item.userId.toString() == firstTeacher._id.toString()
+    );
+    const secondProfileImage = profileImagesObjList.find(
+      (item) => item.userId.toString() == secondTeacher._id.toString()
+    );
+    const thirdProfileImage = profileImagesObjList.find(
+      (item) => item.userId.toString() == thirdTeacher._id.toString()
+    );
 
     const topTeachers = {
       first: {
         teacher: firstTeacher,
         studentsCount: sortedData[0] && sortedData[0][1],
+        profileImage: firstProfileImage,
       },
       second: {
         teacher: secondTeacher,
         studentsCount: sortedData[1] && sortedData[1][1],
+        profileImage: secondProfileImage,
       },
       third: {
         teacher: thirdTeacher,
         studentsCount: sortedData[2] && sortedData[2][1],
+        profileImage: thirdProfileImage,
       },
     };
 
@@ -143,8 +163,6 @@ export const getDahsboardData = async (req, res) => {
       teachersCount,
       lostMoney,
     };
-
-    console.log(result);
 
     res.status(200).json(result);
   } catch (err) {
