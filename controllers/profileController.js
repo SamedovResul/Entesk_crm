@@ -5,17 +5,17 @@ export const getProfileImage = async (req, res) => {
   const { id } = req.user;
 
   try {
-    const profileImage = await ProfileImage.find({ userId: id });
+    const profileImage = await ProfileImage.findOne({ userId: id });
 
-    if (!profileImage[0]) {
+    if (!profileImage) {
       return res.status(200).json(null);
     }
 
-    const base64Image = Buffer.from(profileImage[0]?.profileImage).toString(
+    const base64Image = Buffer.from(profileImage?.profileImage).toString(
       "base64"
     );
 
-    const objProfileImage = profileImage[0].toObject();
+    const objProfileImage = profileImage.toObject();
 
     objProfileImage.profileImage = base64Image;
 

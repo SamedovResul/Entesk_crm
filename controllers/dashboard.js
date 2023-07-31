@@ -1,5 +1,6 @@
 import { Course } from "../models/courseModel.js";
 import { Lesson } from "../models/lessonModel.js";
+import { ProfileImage } from "../models/profileImageModel.js";
 import { Student } from "../models/studentModel.js";
 import { Teacher } from "../models/teacherModel.js";
 
@@ -104,20 +105,39 @@ export const getDahsboardData = async (req, res) => {
     const thirdTeacher = await Teacher.findById(
       sortedData[2] && sortedData[2][0]
     );
-    console.log(3);
+
+    const profileImages = await ProfileImage.find({
+      userId: { $in: [firstTeacher._id, secondTeacher._id, thirdTeacher._id] },
+    });
+
+    const profileImagesObjList = profileImages.map((item) => {
+      const profileImage = Buffer.from(item?.profileImage).toString("base64");
+      return { ...item, profileImage };
+    });
+
+    console.log(profileImagesObjList);
 
     const topTeachers = {
       first: {
         teacher: firstTeacher,
         studentsCount: sortedData[0] && sortedData[0][1],
+        profileImage: profileImagesObjList.find(
+          (item) => item.userId == firstTeacher._id
+        ),
       },
       second: {
         teacher: secondTeacher,
         studentsCount: sortedData[1] && sortedData[1][1],
+        profileImage: profileImagesObjList.find(
+          (item) => item.userId == secondTeacher._id
+        ),
       },
       third: {
         teacher: thirdTeacher,
         studentsCount: sortedData[2] && sortedData[2][1],
+        profileImage: profileImagesObjList.find(
+          (item) => item.userId == thirdTeacher._id
+        ),
       },
     };
 
