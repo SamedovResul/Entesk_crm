@@ -77,7 +77,7 @@ export const updateCourse = async (req, res) => {
     const existingCourse = await Course.findOne({ name });
 
     if (existingCourse && existingCourse._id != id) {
-      return res.status(409).json({ key: "course-already-exists" });
+      throw res.status(409).json({ key: "course-already-exists" });
     }
 
     const updatedCourse = await Course.findByIdAndUpdate(id, req.body, {
