@@ -72,12 +72,16 @@ export const createCourse = async (req, res) => {
 
 // Update course
 export const updateCourse = async (req, res) => {
-  const { id, name } = req.params;
+  const { id } = req.params;
+  const { name } = req.body;
+
   try {
-    const existingCourse = await Course.findOne({ name });
+    const existingCourse = await Course.findOne({
+      name: { $regex: new RegExp(name, "i") },
+    });
 
     if (existingCourse && existingCourse._id != id) {
-      throw res.status(409).json({ key: "course-already-exists" });
+      return res.status(409).json({ key: "course-already-exists" });
     }
 
     const updatedCourse = await Course.findByIdAndUpdate(id, req.body, {
