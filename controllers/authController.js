@@ -47,7 +47,7 @@ export const registerStudent = async (req, res) => {
     const existingAdmin = await Admin.findOne({ email });
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-    console.log("999999999933333333333");
+
     if (existingAdmin || existingStudent || existingTeacher) {
       return res
         .status(400)
@@ -74,7 +74,10 @@ export const registerStudent = async (req, res) => {
       "courses"
     );
 
-    res.status(201).json(studentWithCourses);
+    const studentsCount = await Student.countDocuments();
+    const lastPage = Math.ceil(studentsCount / 10);
+
+    res.status(201).json({ student: studentWithCourses, lastPage });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -108,7 +111,10 @@ export const registerTeacher = async (req, res) => {
       { $addToSet: { teachers: teacher._id } }
     );
 
-    res.status(201).json(teacher);
+    const teachersCount = await Teacher.countDocuments();
+    const lastPage = Math.ceil(teachersCount / 10);
+
+    res.status(201).json({ teacher, lastPage });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -117,6 +123,7 @@ export const registerTeacher = async (req, res) => {
 // Login
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const admin = await Admin.findOne({ email });
     const student = await Student.findOne({ email });
@@ -125,16 +132,15 @@ export const login = async (req, res) => {
     const user = admin || student || teacher;
 
     console.log( email, password )
-    const isPasswordValid =  bcrypt.compare(password, user.password);
     console.log(isPasswordValid)
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ key: "user-not-found" });
     }
 
-    // const isPasswordValid = await bcrypt.compare(password, user.password); ---- right
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res.status(404).json({ message: "Invalid password" });
+      return res.status(404).json({ key: "invalid-password" });
     }
 
     // refresh and accesstoken callback for creating
@@ -157,8 +163,10 @@ export const login = async (req, res) => {
   }
 };
 
-// Change forgotten password
-export const changeForgottenPassword = async (req, res) => {
+// FORGOTTEN PASSWORD
+
+// Send code to email
+export const sendCodeToEmail = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -169,7 +177,7 @@ export const changeForgottenPassword = async (req, res) => {
     const user = admin || student || teacher;
 
     if (!user) {
-      res.status(404).json({ key: "User is not found" });
+      return res.status(404).json({ key: "User is not found" });
     }
 
     let randomCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -197,13 +205,77 @@ export const changeForgottenPassword = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        res.status(500).json({ error: error });
+        return res.status(500).json({ error: error });
       } else {
-        res
-          .status(200)
-          .json({ message: "Code sent successfuly", user: user.email });
+        res.status(200).json({ message: "Code sent successfuly" });
       }
     });
+
+    user.otp = randomCode;
+
+    await user.save();
+
+    setTimeout(async () => {
+      console.log("salam set time out");
+      user.otp = 0;
+      await user.save();
+    }, 120000);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Check otp kod
+export const checkOtpCode = async (req, res) => {
+  const { otp } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ otp });
+    const student = await Student.findOne({ otp });
+    const teacher = await Teacher.findOne({ otp });
+
+    const user = admin || student || teacher;
+
+    if (!user) {
+      return res.status(404).json({ message: "User is not found" });
+    }
+
+    const userId = user._id;
+
+    user.otp = 0;
+
+    await user.save();
+
+    res.status(200).json({ userId });
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
+// Change forgotten password
+export const changeForgottenPassword = async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  try {
+    const admin = await Admin.findById(userId);
+    const student = await Student.findById(userId);
+    const teacher = await Teacher.findById(userId);
+
+    const user = admin || student || teacher;
+
+    if (!user) {
+      return res.status(404).json({ message: "User is not found" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    user.otp = 0;
+
+    await user.save();
+
+    res.status(200).json("password changed successfully");
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }

@@ -63,10 +63,12 @@ const lessonSchema = new Schema(
       type: Number,
       required: true,
     },
+    earnings: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
-
-lessonSchema.index({ createdAt: -1 });
 
 export const Lesson = mongoose.model("Lesson", lessonSchema);

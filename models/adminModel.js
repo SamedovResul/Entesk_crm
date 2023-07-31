@@ -21,10 +21,9 @@ const adminSchema = new Schema(
       type: String,
       default: "admin",
     },
+    otp: Number,
   },
   { timestamps: true }
 );
-
-adminSchema.index({ createdAt: -1 });
 
 export const Admin = mongoose.model("Admin", adminSchema);

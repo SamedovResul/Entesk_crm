@@ -35,15 +35,9 @@ const teacherSchema = new Schema(
       type: String,
       default: "teacher",
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-      index: true,
-    },
+    otp: Number,
   },
   { timestamps: true }
 );
-
-teacherSchema.index({ fullName: "text", createdAt: -1 });
 
 export const Teacher = mongoose.model("Teacher", teacherSchema);

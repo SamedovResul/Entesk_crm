@@ -37,20 +37,33 @@ const studentSchema = new Schema(
       type: Number,
       required: true,
     },
+    payment: {
+      type: Number,
+      required: true,
+    },
+    sector: {
+      type: String,
+      enum: ["AZ", "RU", "EN"],
+      required: true,
+    },
     courses: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
       },
     ],
+    whereComing: {
+      type: String,
+      enum: ["instagram", "referral", "event", "externalAds", "other"],
+      default: "other",
+    },
     status: {
       type: Boolean,
       default: true,
     },
+    otp: Number,
   },
   { timestamps: true }
 );
-
-studentSchema.index({ createdAt: -1 });
 
 export const Student = mongoose.model("Student", studentSchema);

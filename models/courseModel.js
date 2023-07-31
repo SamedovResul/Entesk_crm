@@ -8,7 +8,6 @@ const courseSchema = new Schema(
       type: String,
       require: true,
     },
-    category: { type: Array },
     students: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
@@ -17,10 +16,12 @@ const courseSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Teacher",
     },
+    status: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
-
-courseSchema.index({ createdAt: -1 });
 
 export const Course = mongoose.model("Course", courseSchema);

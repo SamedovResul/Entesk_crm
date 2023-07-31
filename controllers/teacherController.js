@@ -32,7 +32,6 @@ export const getTeachersForPagination = async (req, res) => {
       teachers = await Teacher.find({
         fullName: { $regex: regexSearchQuery },
       })
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");
@@ -42,7 +41,6 @@ export const getTeachersForPagination = async (req, res) => {
       const teacherCount = await Teacher.countDocuments();
       totalPages = Math.ceil(teacherCount / limit);
       teachers = await Teacher.find()
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");
@@ -133,7 +131,7 @@ export const updateTeacherPassword = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Old password is incorrect." });
+      return res.status(400).json({ key: "old-password-incorrect." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -145,52 +143,6 @@ export const updateTeacherPassword = async (req, res) => {
     );
 
     res.status(200).json(updatedTeacher);
-  } catch (err) {
-    res.status(500).json({ message: { error: err.message } });
-  }
-};
-
-// Calculate teacher salary
-
-export const calculateSalary = async (req, res) => {
-  const { teacherId, startDate, endDate } = req.query;
-
-  try {
-    let salaryInfo;
-    if (teacherId && startDate && endDate) {
-      const lessons = await Lesson.find({
-        teacher: teacherId,
-        date: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-      });
-
-      salaryInfo = lessons.map((item) => {
-        return {};
-      });
-    } else if (teacherId) {
-      let currentDate = new Date();
-      let firstDateOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        1
-      );
-      let lastDateOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + 1,
-        0
-      );
-      lastDateOfMonth.setHours(23, 59, 59, 999);
-
-      salaryInfo = await Lesson.find({
-        teacher: teacherId,
-        date: {
-          $gte: firstDateOfMonth,
-          $lt: lastDateOfMonth,
-        },
-      });
-    }
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
   }

@@ -31,7 +31,6 @@ export const getCoursesForPagination = async (req, res) => {
       courses = await Course.find({
         name: { $regex: regexSearchQuery },
       })
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
 
@@ -40,7 +39,6 @@ export const getCoursesForPagination = async (req, res) => {
       const courseCount = await Course.countDocuments();
       totalPages = Math.ceil(courseCount / limit);
       courses = await Course.find()
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
     }
@@ -64,7 +62,11 @@ export const createCourse = async (req, res) => {
 
     const newCourse = new Course(req.body);
     await newCourse.save();
-    res.status(201).json(newCourse);
+
+    const coursesCount = await Course.countDocuments();
+    const lastPage = Math.ceil(coursesCount / 10);
+
+    res.status(201).json({ course: newCourse, lastPage });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -1,6 +1,7 @@
 import { Lesson } from "../models/lessonModel.js";
 import { Student } from "../models/studentModel.js";
 import bcrypt from "bcrypt";
+import { createNotificationForLessonsCount } from "./notificationController.js";
 
 // Get students
 export const getStudents = async (req, res) => {
@@ -32,7 +33,6 @@ export const getStudentsForPagination = async (req, res) => {
       students = await Student.find({
         fullName: { $regex: regexSearchQuery },
       })
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");
@@ -42,7 +42,6 @@ export const getStudentsForPagination = async (req, res) => {
       const studentCount = await Student.countDocuments();
       totalPages = Math.ceil(studentCount / limit);
       students = await Student.find()
-        .sort({ _id: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .populate("courses");
@@ -75,30 +74,36 @@ export const getStudentsByCourseId = async (req, res) => {
   const { courseId, day, time, role, date } = req.query;
 
   try {
-    const students = await Student.find({ courses: courseId });
+    const students = await Student.find({
+      courses: courseId,
+      lessonAmount: { $gt: 0 },
+    });
 
     const newStudents = await Promise.all(
       students.map(async (student) => {
         let checkStudent;
 
         if (role === "main") {
-          checkStudent = await Lesson.find({
+          checkStudent = await Lesson.findOne({
             "students.student": student._id,
             day: day,
             time: time,
             role: role,
           });
         } else if (role === "current") {
-          checkStudent = await Lesson.find({
+          checkStudent = await Lesson.findOne({
             "students.student": student._id,
             day: day,
             time: time,
             role: role,
             date: date,
+            status: {
+              $in: ["unviewed", "confirmed"],
+            },
           });
         }
-        console.log(checkStudent);
-        if (checkStudent[0]) {
+
+        if (checkStudent) {
           return { ...student.toObject(), disable: true };
         } else {
           return { ...student.toObject(), disable: false };
@@ -124,13 +129,19 @@ export const updateStudent = async (req, res) => {
       updatedData = { ...updatedData, password: hashedPassword };
     }
 
+    const student = await Student.findById(id);
+
     const updatedStudent = await Student.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
     }).populate("courses");
 
-    if (!updateStudent) {
+    if (!updatedStudent) {
       return res.status(404).json({ message: "Student not found" });
+    }
+
+    if (student.lessonAmount !== 0 && updatedStudent.lessonAmount === 0) {
+      createNotificationForLessonsCount([updatedStudent]);
     }
 
     res.status(200).json(updatedStudent);
@@ -176,7 +187,7 @@ export const updateStudentPassword = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Old password is incorrect." });
+      return res.status(400).json({ key: "old-password-incorrect." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

@@ -16,6 +16,4 @@ const profileImageSchema = new Schema(
   { timestamps: true }
 );
 
-profileImageSchema.index({ createdAt: -1 });
-
 export const ProfileImage = mongoose.model("profileImage", profileImageSchema);

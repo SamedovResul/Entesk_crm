@@ -152,19 +152,30 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
     }
 
     if (attendance === "present") {
-      filterObj["students.attendance"] = 1;
+      filterObj.students = {
+        $elemMatch: { student: studentId || id, attendance: 1 },
+      };
     } else if (attendance === "absent") {
-      filterObj["students.attendance"] = -1;
+      filterObj.students = {
+        $elemMatch: { student: studentId || id, attendance: -1 },
+      };
     }
 
     let lessons;
 
     if (studentId || role === "student") {
-      lessons = await Lesson.find(filterObj, {
-        students: { $elemMatch: { student: studentId || id } },
-      })
-        .populate("teacher course students.student")
+      const filteredLessons = await Lesson.find(filterObj)
+        .populate("teacher course students.student students.attendance")
         .select("day date time role status note task createdDate");
+
+      lessons = filteredLessons.map((lesson) => {
+        return {
+          ...lesson.toObject(),
+          students: lesson.students.filter(
+            (item) => item.student._id == (studentId || id)
+          ),
+        };
+      });
     } else {
       lessons = await Lesson.find(filterObj).populate(
         "teacher course students.student"
@@ -197,6 +208,17 @@ export const updateLessonInTable = async (req, res) => {
     if (!updatedLesson) {
       return res.status(404).json({ message: "Lesson not found" });
     }
+
+    const earnings = updatedLesson.students.reduce((total, curr) => {
+      if (curr.attendance === 1) {
+        return (total += curr.student.payment);
+      } else {
+        return total;
+      }
+    }, 0);
+
+    updatedLesson.earnings = earnings;
+    await updatedLesson.save();
 
     if (updatedLesson.role === "current" && role === "admin") {
       createNotificationForUpdate(
@@ -232,6 +254,17 @@ export const updateLessonInMainPanel = async (req, res) => {
     if (!updatedLesson) {
       return res.status(404).json({ message: "Lesson not found" });
     }
+
+    const earnings = updatedLesson.students.reduce((total, curr) => {
+      if (curr.attendance === 1) {
+        return (total += curr.student.payment);
+      } else {
+        return total;
+      }
+    }, 0);
+
+    updatedLesson.earnings = earnings;
+    await updatedLesson.save();
 
     if (role === "admin" && req.body.status !== lesson.status) {
       const students = updatedLesson.students.map((item) => item.student._id);
@@ -303,6 +336,7 @@ export const deleteLessonInMainPanel = async (req, res) => {
 };
 
 // Create current lessons from main lessons
+
 export const createCurrentLessonsFromMainLessons = async (req, res) => {
   try {
     const mainTableData = await Lesson.find({
