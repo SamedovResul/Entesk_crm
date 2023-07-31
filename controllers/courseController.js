@@ -55,9 +55,7 @@ export const createCourse = async (req, res) => {
   try {
     const existingCourse = await Course.findOne({ name });
     if (existingCourse) {
-      return res
-        .status(400)
-        .json({ message: "A class with the same name already exists" });
+      return res.status(409).json({ key: "course-already-exists" });
     }
 
     const newCourse = new Course(req.body);
@@ -72,10 +70,16 @@ export const createCourse = async (req, res) => {
   }
 };
 
-// Update class
+// Update course
 export const updateCourse = async (req, res) => {
-  const { id } = req.params;
+  const { id, name } = req.params;
   try {
+    const existingCourse = await Course.findOne({ name });
+
+    if (existingCourse && existingCourse._id != id) {
+      return res.status(409).json({ key: "course-already-exists" });
+    }
+
     const updatedCourse = await Course.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,

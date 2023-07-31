@@ -123,6 +123,12 @@ export const updateStudent = async (req, res) => {
   let updatedData = req.body;
 
   try {
+    const existingStudent = await Student.findOne({ email: updatedData.email });
+
+    if (existingStudent && existingStudent._id != id) {
+      return res.status(400).json({ key: "email-already-exists" });
+    }
+
     if (updatedData.password) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(updatedData.password, salt);

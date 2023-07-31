@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { Notification } from "../models/notificationModel.js";
 
 dotenv.config();
 
@@ -49,9 +50,7 @@ export const registerStudent = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
 
     if (existingAdmin || existingStudent || existingTeacher) {
-      return res
-        .status(400)
-        .json({ message: "A user with the same email already exists" });
+      return res.status(409).json({ key: "email-already-exist" });
     }
 
     const coursesId = req.body.courses;
@@ -74,6 +73,30 @@ export const registerStudent = async (req, res) => {
       "courses"
     );
 
+    const currFirstDate = new Date();
+    const currSecondDate = new Date();
+    const currThirdDate = new Date();
+    const studentBirthday = new Date(student.date);
+    currSecondDate.setDate(currSecondDate.getDate() + 1);
+    currThirdDate.setDate(currThirdDate.getDate() + 2);
+    const studentBirthdayDate = studentBirthday.getDate();
+    const studentBirthdayMonth = studentBirthday.getMonth() + 1;
+
+    if (
+      (currFirstDate.getDate() === studentBirthdayDate &&
+        currFirstDate.getMonth() === studentBirthdayMonth) ||
+      (currSecondDate.getDate() === studentBirthdayDate &&
+        currSecondDate.getMonth() === studentBirthdayMonth) ||
+      (currThirdDate.getDate() === studentBirthdayDate &&
+        currThirdDate.getMonth() === studentBirthdayMonth)
+    ) {
+      Notification.create({
+        role: "birthday",
+        student: student._id,
+        isBirthday: true,
+      });
+    }
+
     const studentsCount = await Student.countDocuments();
     const lastPage = Math.ceil(studentsCount / 10);
 
@@ -92,10 +115,7 @@ export const registerTeacher = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
 
     if (existingAdmin || existingStudent || existingTeacher) {
-      return res
-        .status(409)
-        .json({ message: "A user with the same email already exists" });
-      // .json({ key: "email-already-exists" });
+      return res.status(409).json({ key: "email-already-exist" });
     }
 
     const coursesId = req.body.courses;
