@@ -150,9 +150,6 @@ export const login = async (req, res) => {
     const teacher = await Teacher.findOne({ email });
 
     const user = admin || student || teacher;
-
-    console.log( email, password )
-    console.log(isPasswordValid)
     if (!user) {
       return res.status(404).json({ key: "user-not-found" });
     }
