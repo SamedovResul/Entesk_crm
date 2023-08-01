@@ -103,34 +103,68 @@ export const getDahsboardData = async (req, res) => {
     });
     
     const sortedData = Object.entries(obj).sort((a, b) => b[1] - a[1]);
-    const firstTeacher = await Teacher.findById(
-      sortedData[0] && sortedData[0][0]
-    );
-    const secondTeacher = await Teacher.findById(
-      sortedData[1] && sortedData[1][0]
-    );
-    const thirdTeacher = await Teacher.findById(
-      sortedData[2] && sortedData[2][0]
-    );
 
-    const profileImages = await ProfileImage.find({
-      userId: { $in: [firstTeacher._id, secondTeacher._id, thirdTeacher._id] },
-    });
+    let firstTeacher = null;
+    let secondTeacher = null;
+    let thirdTeacher = null;
 
-    const profileImagesObjList = profileImages.map((item) => {
-      const profileImage = Buffer.from(item?.profileImage).toString("base64");
-      return { userId: item.userId, profileImage: profileImage };
-    });
+    if (sortedData.length > 2) {
+      if (sortedData[2][1] > 0) {
+        firstTeacher = await Teacher.findById(sortedData[0][0]);
+        secondTeacher = await Teacher.findById(sortedData[1][0]);
+        thirdTeacher = await Teacher.findById(sortedData[2][0]);
+      } else if (sortedData[1][1] > 0) {
+        firstTeacher = await Teacher.findById(sortedData[0][0]);
+        secondTeacher = await Teacher.findById(sortedData[1][0]);
+      } else if (sortedData[0][1] > 0) {
+        firstTeacher = await Teacher.findById(sortedData[0][0]);
+      }
+    } else if (sortedData.length === 2) {
+      if (sortedData[1][1] > 0) {
+        firstTeacher = await Teacher.findById(sortedData[0][0]);
+        secondTeacher = await Teacher.findById(sortedData[1][0]);
+      } else if (sortedData[0][1] > 0) {
+        firstTeacher = await Teacher.findById(sortedData[0][0]);
+      }
+    } else if (sortedData.length === 1) {
+      if (sortedData[0][1] > 0) {
+        firstTeacher = await Teacher.findById(sortedData[0][0]);
+      }
+    }
 
-    const firstProfileImage = profileImagesObjList.find(
-      (item) => item.userId.toString() == firstTeacher._id.toString()
-    );
-    const secondProfileImage = profileImagesObjList.find(
-      (item) => item.userId.toString() == secondTeacher._id.toString()
-    );
-    const thirdProfileImage = profileImagesObjList.find(
-      (item) => item.userId.toString() == thirdTeacher._id.toString()
-    );
+    let firstProfileImage = null;
+    let secondProfileImage = null;
+    let thirdProfileImage = null;
+
+    if (firstTeacher) {
+      const profileImage = await ProfileImage.findOne({
+        userId: firstTeacher._id,
+      });
+
+      firstProfileImage =
+        profileImage &&
+        Buffer.from(profileImage?.profileImage).toString("base64");
+    }
+
+    if (secondTeacher) {
+      const profileImage = await ProfileImage.findOne({
+        userId: secondTeacher._id,
+      });
+
+      secondProfileImage =
+        profileImage &&
+        Buffer.from(profileImage?.profileImage).toString("base64");
+    }
+
+    if (thirdTeacher) {
+      const profileImage = await ProfileImage.findOne({
+        userId: secondTeacher._id,
+      });
+
+      thirdProfileImage =
+        profileImage &&
+        Buffer.from(profileImage?.profileImage).toString("base64");
+    }
 
     const topTeachers = {
       first: {

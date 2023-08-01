@@ -14,7 +14,10 @@ import salaryRoutes from "./routes/salaryRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import demoSmtpRouter from "./routes/demoSmtpRoutes.js";
-import { createNotificationForBirthday } from "./controllers/notificationController.js";
+import {
+  createNotificationForBirthday,
+  deleteNotificationsForBirthday,
+} from "./controllers/notificationController.js";
 
 import cron from "node-cron";
 
@@ -57,8 +60,9 @@ mongoose
     console.log("connected database");
     app.listen(port, () => {
       console.log(`listen server at ${port}`);
-      cron.schedule("0 9 * * *", () => {
+      cron.schedule("0 0 * * *", () => {
         createNotificationForBirthday();
+        deleteNotificationsForBirthday();
       });
     });
   })

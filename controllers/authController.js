@@ -76,7 +76,7 @@ export const registerStudent = async (req, res) => {
     const currFirstDate = new Date();
     const currSecondDate = new Date();
     const currThirdDate = new Date();
-    const studentBirthday = new Date(student.date);
+    const studentBirthday = new Date(student.birthday);
     currSecondDate.setDate(currSecondDate.getDate() + 1);
     currThirdDate.setDate(currThirdDate.getDate() + 2);
     const studentBirthdayDate = studentBirthday.getDate();
@@ -84,18 +84,25 @@ export const registerStudent = async (req, res) => {
 
     if (
       (currFirstDate.getDate() === studentBirthdayDate &&
-        currFirstDate.getMonth() === studentBirthdayMonth) ||
+        currFirstDate.getMonth() + 1 === studentBirthdayMonth) ||
       (currSecondDate.getDate() === studentBirthdayDate &&
-        currSecondDate.getMonth() === studentBirthdayMonth) ||
+        currSecondDate.getMonth() + 1 === studentBirthdayMonth) ||
       (currThirdDate.getDate() === studentBirthdayDate &&
-        currThirdDate.getMonth() === studentBirthdayMonth)
+        currThirdDate.getMonth() + 1 === studentBirthdayMonth)
     ) {
-      Notification.create({
+      console.log("salam1234");
+      await Notification.create({
         role: "birthday",
         student: student._id,
         isBirthday: true,
       });
     }
+
+    await Notification.create({
+      role: "birthday",
+      student: student._id,
+      isBirthday: true,
+    });
 
     const studentsCount = await Student.countDocuments();
     const lastPage = Math.ceil(studentsCount / 10);
