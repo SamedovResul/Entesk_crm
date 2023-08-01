@@ -90,19 +90,12 @@ export const registerStudent = async (req, res) => {
       (currThirdDate.getDate() === studentBirthdayDate &&
         currThirdDate.getMonth() + 1 === studentBirthdayMonth)
     ) {
-      console.log("salam1234");
       await Notification.create({
         role: "birthday",
         student: student._id,
         isBirthday: true,
       });
     }
-
-    await Notification.create({
-      role: "birthday",
-      student: student._id,
-      isBirthday: true,
-    });
 
     const studentsCount = await Student.countDocuments();
     const lastPage = Math.ceil(studentsCount / 10);
