@@ -76,7 +76,7 @@ export const registerStudent = async (req, res) => {
     const currFirstDate = new Date();
     const currSecondDate = new Date();
     const currThirdDate = new Date();
-    const studentBirthday = new Date(student.birthday);
+    const studentBirthday = new Date(student.date);
     currSecondDate.setDate(currSecondDate.getDate() + 1);
     currThirdDate.setDate(currThirdDate.getDate() + 2);
     const studentBirthdayDate = studentBirthday.getDate();
@@ -84,25 +84,18 @@ export const registerStudent = async (req, res) => {
 
     if (
       (currFirstDate.getDate() === studentBirthdayDate &&
-        currFirstDate.getMonth() + 1 === studentBirthdayMonth) ||
+        currFirstDate.getMonth() === studentBirthdayMonth) ||
       (currSecondDate.getDate() === studentBirthdayDate &&
-        currSecondDate.getMonth() + 1 === studentBirthdayMonth) ||
+        currSecondDate.getMonth() === studentBirthdayMonth) ||
       (currThirdDate.getDate() === studentBirthdayDate &&
-        currThirdDate.getMonth() + 1 === studentBirthdayMonth)
+        currThirdDate.getMonth() === studentBirthdayMonth)
     ) {
-      console.log("salam1234");
-      await Notification.create({
+      Notification.create({
         role: "birthday",
         student: student._id,
         isBirthday: true,
       });
     }
-
-    await Notification.create({
-      role: "birthday",
-      student: student._id,
-      isBirthday: true,
-    });
 
     const studentsCount = await Student.countDocuments();
     const lastPage = Math.ceil(studentsCount / 10);
@@ -310,7 +303,7 @@ const createAccessToken = (user) => {
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "8h" }
+    { expiresIn: "12h" }
   );
   return AccessToken;
 };
@@ -337,7 +330,7 @@ export const refreshToken = async (req, res) => {
         if (err) {
           console.log("Please Login or Register")
           revokeTokenFromDatabase(rf_token);
-          return res.status(400).json({ msg: "Please Login or Register" });
+          return res.status(402).json({ msg: "Please Login or Register" });
         } else {
           const accesstoken = createAccessToken({
             email: user.email,
