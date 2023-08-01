@@ -153,6 +153,35 @@ export const deleteNotificationForUpdateTable = async () => {
   }
 };
 
+// delete notification for birthday
+export const deleteNotificationsForBirthday = async (req, res) => {
+  const currDate = new Date();
+  currDate.setDate(currDate.getDate() - 1);
+
+  try {
+    const students = await Student.find({
+      $expr: {
+        $and: [
+          { $eq: [{ $dayOfMonth: "$birthday" }, currDate.getDate()] },
+          { $eq: [{ $month: "$birthday" }, currDate.getMonth() + 1] },
+        ],
+      },
+      status: true,
+    })
+      .select("_id")
+      .lean();
+
+    const studentsId = students.map((student) => student._id);
+
+    await Notification.deleteMany({
+      student: { $in: studentsId },
+      role: "birthday",
+    });
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
+
 // Do as notification seen
 export const doAsNotificationsSeen = async (req, res) => {
   const { role } = req.user;
