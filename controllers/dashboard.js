@@ -5,6 +5,7 @@ import { Student } from "../models/studentModel.js";
 import { Teacher } from "../models/teacherModel.js";
 
 export const getDahsboardData = async (req, res) => {
+  
   //   const startOfMonth = new Date();
   //   const endOfMonth = new Date();
   //   startOfMonth.setMonth(startOfMonth.getMonth() - 1);
@@ -14,13 +15,16 @@ export const getDahsboardData = async (req, res) => {
   //   endOfMonth.setHours(23, 59, 59, 999);
 
   try {
+    
     //  get confirmed and cancelled lessons
     const confirmedLessons = await Lesson.find({ status: "confirmed" });
     const confirmedLessonsOfMonth = await Lesson.find({
       status: "confirmed",
     });
     const cancelledLessons = await Lesson.find({ status: "cancelled" });
-
+    // console.log(cancelledLessons,'1')
+    // console.log(confirmedLessons,'2')
+    // console.log(confirmedLessonsOfMonth,'3')
     // get students count for sector
     const studentsCountAz = await Student.countDocuments({
       status: true,
@@ -34,11 +38,12 @@ export const getDahsboardData = async (req, res) => {
       status: true,
       sector: "RU",
     });
-
+    // console.log(studentsCountAz,'4')
+    // console.log(studentsCountEn,'5')
+    // console.log(studentsCountRu,'6')
     // get teachers count
-
+    
     const teachersCount = await Teacher.countDocuments();
-
     // get students count for where coming
     const studentsCountFromInstagram = await Student.countDocuments({
       whereComing: "instagram",
@@ -55,7 +60,11 @@ export const getDahsboardData = async (req, res) => {
     const studentsCountFromOther = await Student.countDocuments({
       whereComing: "other",
     });
-
+    // console.log(studentsCountFromInstagram,'8')
+    // console.log(studentsCountFromReferral,'9')
+    // console.log(studentsCountFromEvent,'10')
+    // console.log(studentsCountFromExternalAdvertising,'11')
+    // console.log(studentsCountFromOther,'12')
     // get courses and they students count
     const courses = await Course.find();
 
@@ -79,21 +88,21 @@ export const getDahsboardData = async (req, res) => {
     const lostMoney = cancelledLessons.reduce((total, curr) => {
       return (total += curr?.earnings || 0);
     }, 0);
+    
 
     const obj = {};
-
+    console.log(confirmedLessonsOfMonth);
     confirmedLessonsOfMonth.forEach((lesson) => {
       const studentsCount = lesson.students.filter(
         (item) => item.attendance === 1
       ).length;
-
+      console.log(lesson);
       obj[lesson.teacher] = obj[lesson.teacher]
         ? obj[lesson.teacher] + studentsCount
         : studentsCount;
     });
-
+    
     const sortedData = Object.entries(obj).sort((a, b) => b[1] - a[1]);
-
     const firstTeacher = await Teacher.findById(
       sortedData[0] && sortedData[0][0]
     );
@@ -141,6 +150,15 @@ export const getDahsboardData = async (req, res) => {
       },
     };
 
+    // console.log(firstTeacher,'1');
+    // console.log(secondTeacher,'2');
+    // console.log(thirdTeacher,'3');
+    // console.log(profileImages,'4');
+    // console.log(profileImagesObjList,'5');
+    // console.log(firstProfileImage,'6');
+    // console.log(secondProfileImage,'7');
+    // console.log(thirdProfileImage,'8');
+    // console.log(topTeachers,'9');
     const studentsCountByWhereComing = {
       studentsCountFromInstagram,
       studentsCountFromEvent,
@@ -163,7 +181,7 @@ export const getDahsboardData = async (req, res) => {
       teachersCount,
       lostMoney,
     };
-
+    
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });

@@ -303,7 +303,7 @@ const createAccessToken = (user) => {
   const AccessToken = jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     process.env.SECRET_KEY,
-    { expiresIn: "30m" }
+    { expiresIn: "1d" }
   );
   return AccessToken;
 };
