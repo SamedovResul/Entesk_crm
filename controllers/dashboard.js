@@ -148,7 +148,7 @@ export const getDahsboardData = async (req, res) => {
 
     if (thirdTeacher) {
       const profileImage = await ProfileImage.findOne({
-        userId: secondTeacher._id,
+        userId: thirdTeacher._id,
       });
 
       thirdProfileImage =
