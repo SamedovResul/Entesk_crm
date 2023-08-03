@@ -336,7 +336,6 @@ export const deleteLessonInMainPanel = async (req, res) => {
 };
 
 // Create current lessons from main lessons
-
 export const createCurrentLessonsFromMainLessons = async (req, res) => {
   try {
     const mainTableData = await Lesson.find({
@@ -357,9 +356,11 @@ export const createCurrentLessonsFromMainLessons = async (req, res) => {
       }
     }
 
-    const currentTableData = mainTableData.map((data) => {
+    const currentTableData = mainTableData.map(async (data) => {
       const date = new Date(currentWeekStart);
       date.setDate(date.getDate() + data.day - 1);
+
+      const teacher = await Teacher.findById(data.teacher);
 
       const dataObj = data.toObject();
       delete dataObj._id;
@@ -368,6 +369,7 @@ export const createCurrentLessonsFromMainLessons = async (req, res) => {
         ...dataObj,
         date: date,
         role: "current",
+        salary: teacher.salary,
       };
     });
 

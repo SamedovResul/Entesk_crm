@@ -1,7 +1,6 @@
 import { Course } from "../models/courseModel.js";
 
 // Get courses
-
 export const getCourses = async (req, res) => {
   try {
     const courses = await Course.find();
