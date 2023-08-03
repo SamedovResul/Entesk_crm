@@ -86,6 +86,8 @@ export const updateTeacher = async (req, res) => {
       updatedData = { ...updatedData, password: hashedPassword };
     }
 
+    const teacher = await Teacher.findById(id);
+
     const updatedTeacher = await Teacher.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
@@ -93,6 +95,13 @@ export const updateTeacher = async (req, res) => {
 
     if (!updatedTeacher) {
       return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    if (teacher.status && !updatedTeacher.status) {
+      await Lesson.deleteMany({
+        role: "main",
+        teacher: teacher._id,
+      });
     }
 
     res.status(200).json(updatedTeacher);

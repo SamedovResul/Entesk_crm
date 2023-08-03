@@ -356,22 +356,25 @@ export const createCurrentLessonsFromMainLessons = async (req, res) => {
       }
     }
 
-    const currentTableData = mainTableData.map(async (data) => {
-      const date = new Date(currentWeekStart);
-      date.setDate(date.getDate() + data.day - 1);
+    const currentTableData = await Promise.all(
+      mainTableData.map(async (data) => {
+        const date = new Date(currentWeekStart);
+        date.setDate(date.getDate() + data.day - 1);
 
-      const teacher = await Teacher.findById(data.teacher);
+        const teacher = await Teacher.findById(data.teacher).select("salary");
 
-      const dataObj = data.toObject();
-      delete dataObj._id;
-      delete dataObj.status;
-      return {
-        ...dataObj,
-        date: date,
-        role: "current",
-        salary: teacher.salary,
-      };
-    });
+        const dataObj = data.toObject();
+        delete dataObj._id;
+        delete dataObj.status;
+
+        return {
+          ...dataObj,
+          date: date,
+          role: "current",
+          salary: teacher.salary,
+        };
+      })
+    );
 
     await Lesson.insertMany(currentTableData);
 

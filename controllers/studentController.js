@@ -150,6 +150,18 @@ export const updateStudent = async (req, res) => {
       createNotificationForLessonsCount([updatedStudent]);
     }
 
+    if (student.status && !updatedStudent.status) {
+      await Lesson.updateMany(
+        {
+          role: "main",
+          "students.student": student._id,
+        },
+        {
+          $pull: { students: { student: student._id } },
+        }
+      );
+    }
+
     res.status(200).json(updatedStudent);
   } catch (err) {
     res.status(500).json({ message: { error: err.message } });
