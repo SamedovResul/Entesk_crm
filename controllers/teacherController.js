@@ -127,6 +127,7 @@ export const deleteTeacher = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
+// fajk
 
 // Update teacher password
 export const updateTeacherPassword = async (req, res) => {
