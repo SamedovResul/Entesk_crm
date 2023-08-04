@@ -74,7 +74,6 @@ export const updateExpense = async (req, res) => {
 };
 
 // Delete expense
-
 export const deleteExpense = async (req, res) => {
   const { id } = req.params;
 
