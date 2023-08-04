@@ -13,7 +13,8 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import salaryRoutes from "./routes/salaryRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import dashboardRoutes from "./routes/dashboard.js";
-import demoSmtpRouter from "./routes/demoSmtpRoutes.js";
+import demoSmtpRoutes from "./routes/demoSmtpRoutes.js";
+import expenseRoutes from "./routes/expenseRoutes.js";
 import {
   createNotificationForBirthday,
   deleteNotificationsForBirthday,
@@ -48,7 +49,8 @@ app.use("/api/notification", notificationRoutes);
 app.use("/api/salary", salaryRoutes);
 app.use("/api/user/profile", profileRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/demo", demoSmtpRouter);
+app.use("/api/demo", demoSmtpRoutes);
+app.use("/api/expense", expenseRoutes);
 
 app.get("/", (req, res) => {
   res.send("salam");
