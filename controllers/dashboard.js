@@ -6,12 +6,10 @@ import { Student } from "../models/studentModel.js";
 import { Teacher } from "../models/teacherModel.js";
 
 export const getDahsboardData = async (req, res) => {
-  // const { startDate, endDate } = req.query;
-  const startDate = null,
-    endDate = null;
-  console.log(1);
+  const { startDate, endDate } = req.query;
+
   try {
-    let dateFilterObj;
+    let dateFilterObj = {};
 
     const startOfMonth = new Date();
     const endOfMonth = new Date();
@@ -20,7 +18,7 @@ export const getDahsboardData = async (req, res) => {
     startOfMonth.setHours(0, 0, 0, 0);
     endOfMonth.setDate(0);
     endOfMonth.setHours(23, 59, 59, 999);
-    console.log(2);
+
     if (startDate && endDate) {
       dateFilterObj.date = {
         $gte: startDate,

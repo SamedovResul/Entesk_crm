@@ -240,15 +240,8 @@ export const updateLessonInMainPanel = async (req, res) => {
 
   try {
     if (role === "student") {
-      const updatedLesson = await Lesson.findOneAndUpdate(
-        { _id: id, "students.student": req.user.id },
-        { $set: { "students.$.attendance": req.body.attendance } }
-      );
-      return res.status(200).json({
-        attendance: updatedLesson.students.find(
-          (item) => item.student.toString() === req.user.id
-        ).attendance,
-      });
+      const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body);
+      return res.status(200).json(updatedLesson);
     }
 
     const lesson = await Lesson.findById(id);
