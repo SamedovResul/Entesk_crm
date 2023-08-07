@@ -34,4 +34,4 @@ export const getUpdateButtonStatus = async (req, res) => {
   }
 };
 
-getUpdateButtonStatus();
+// getUpdateButtonStatus();

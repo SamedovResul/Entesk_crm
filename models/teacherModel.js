@@ -57,6 +57,11 @@ const teacherSchema = new Schema(
       type: String,
       required: true,
     },
+    sector: {
+      type: String,
+      enum: ["AZ", "RU", "EN"],
+      required: true,
+    },
     otp: Number,
   },
   { timestamps: true }
