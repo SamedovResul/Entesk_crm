@@ -39,24 +39,17 @@ export const getDahsboardData = async (req, res) => {
       status: "confirmed",
     });
     console.log(1);
-    const cancelledLessons = await Lesson.find({
-      ...dateFilterObj,
-      status: "cancelled",
-    });
 
     // get students count for sector
     const studentsCountAz = await Student.countDocuments({
-      ...dateFilterObj,
       status: true,
       sector: "AZ",
     });
     const studentsCountEn = await Student.countDocuments({
-      ...dateFilterObj,
       status: true,
       sector: "EN",
     });
     const studentsCountRu = await Student.countDocuments({
-      ...dateFilterObj,
       status: true,
       sector: "RU",
     });
@@ -64,37 +57,31 @@ export const getDahsboardData = async (req, res) => {
     // get disabled students count
 
     const disabledStudentsCount = await Student.countDocuments({
-      ...dateFilterObj,
       status: false,
     });
 
     // get teachers count
-    const teachersCount = await Teacher.countDocuments(dateFilterObj);
+    const teachersCount = await Teacher.countDocuments();
 
     // get students count for where coming
     const studentsCountFromInstagram = await Student.countDocuments({
-      ...dateFilterObj,
       whereComing: "instagram",
     });
     const studentsCountFromReferral = await Student.countDocuments({
-      ...dateFilterObj,
       whereComing: "referral",
     });
     const studentsCountFromEvent = await Student.countDocuments({
-      ...dateFilterObj,
       whereComing: "event",
     });
     const studentsCountFromExternalAdvertising = await Student.countDocuments({
-      ...dateFilterObj,
       whereComing: "externalAds",
     });
     const studentsCountFromOther = await Student.countDocuments({
-      ...dateFilterObj,
       whereComing: "other",
     });
 
     // get courses and they students count
-    const courses = await Course.find(dateFilterObj);
+    const courses = await Course.find();
 
     const coursesInfo = await Promise.all(
       courses.map(async (course) => {
@@ -110,7 +97,7 @@ export const getDahsboardData = async (req, res) => {
     );
 
     // expneses
-    const expenses = await Expense.find(dateFilterObj);
+    const expenses = await Expense.find();
     const expensesValue = expenses.reduce(
       (total, expense) => (total += expense.value),
       0
@@ -243,5 +230,3 @@ export const getDahsboardData = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
-// getDahsboardData();

@@ -239,11 +239,17 @@ export const updateLessonInMainPanel = async (req, res) => {
   const { role } = req.user;
 
   try {
-
-    if(role==="student"){
-      
+    if (role === "student") {
+      const updatedLesson = await Lesson.findOneAndUpdate(
+        { _id: id, "students.student": req.user.id },
+        { $set: { "students.$.attendance": req.body.attendance } }
+      );
+      return res.status(200).json({
+        attendance: updatedLesson.students.find(
+          (item) => item.student.toString() === req.user.id
+        ).attendance,
+      });
     }
-
 
     const lesson = await Lesson.findById(id);
     let newLesson = req.body;
@@ -389,5 +395,3 @@ export const createCurrentLessonsFromMainLessons = async (req, res) => {
     res.status(500).json({ message: { error: err.message } });
   }
 };
-
-
