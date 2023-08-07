@@ -239,6 +239,12 @@ export const updateLessonInMainPanel = async (req, res) => {
   const { role } = req.user;
 
   try {
+
+    if(role==="student"){
+      
+    }
+
+
     const lesson = await Lesson.findById(id);
     let newLesson = req.body;
 
