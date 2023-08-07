@@ -61,6 +61,22 @@ const studentSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    school: {
+      type: String,
+      required: true,
+    },
+    educationDegree: {
+      type: String,
+      required: true,
+    },
+    healthStatus: {
+      type: String,
+      required: true,
+    },
+    phoneUrgent: {
+      type: String,
+      required: true,
+    },
     otp: Number,
   },
   { timestamps: true }

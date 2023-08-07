@@ -7,8 +7,6 @@ export const getExpensesForPagination = async (req, res) => {
   const limit = 10;
   const { startDate, endDate } = req.query;
 
-  console.log(startDate, endDate);
-
   try {
     let totalPages;
     let expenses;

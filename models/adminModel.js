@@ -19,7 +19,8 @@ const adminSchema = new Schema(
     },
     role: {
       type: String,
-      default: "admin",
+      enum: ["admin", "super-admin"],
+      required: true,
     },
     otp: Number,
   },

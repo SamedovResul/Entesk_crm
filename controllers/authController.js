@@ -17,16 +17,12 @@ export const registerAdmin = async (req, res) => {
   try {
     const existingStudent = await Student.findOne({ email });
     const existingTeacher = await Teacher.findOne({ email });
-    const adminCount = await Admin.countDocuments();
+    const existingAdmin = await Admin.findOne({ email });
 
-    if (existingStudent || existingTeacher) {
+    if (existingStudent || existingTeacher || existingAdmin) {
       return res
         .status(400)
         .json({ message: "A user with the same email already exists" });
-    }
-
-    if (adminCount > 0) {
-      return res.status(400).json({ message: "A admin already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);

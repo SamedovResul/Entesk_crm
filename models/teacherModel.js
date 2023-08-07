@@ -35,6 +35,28 @@ const teacherSchema = new Schema(
       type: String,
       default: "teacher",
     },
+    fincode: {
+      type: String,
+    },
+    seriaNumber: {
+      type: String,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    workExperience: {
+      type: String,
+      required: true,
+    },
+    maritalStatus: {
+      type: String,
+      required: true,
+    },
+    disability: {
+      type: String,
+      required: true,
+    },
     otp: Number,
   },
   { timestamps: true }
