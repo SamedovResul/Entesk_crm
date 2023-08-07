@@ -240,7 +240,18 @@ export const updateLessonInMainPanel = async (req, res) => {
 
   try {
     if (role === "student") {
-      const updatedLesson = await Lesson.findByIdAndUpdate(id, req.body);
+      console.log("student=====", req.body.students[0].attendance);
+      console.log(req.user.id);
+      const updatedLesson = await Lesson.findById(id);
+
+       updatedLesson.students = updatedLesson.students.map((item) =>
+        item.student.toString() === req.user.id
+          ? { ...item, attendance: req.body.students[0].attendance }
+          : item
+      );
+
+      await updatedLesson.save();
+
       return res.status(200).json(updatedLesson);
     }
 
