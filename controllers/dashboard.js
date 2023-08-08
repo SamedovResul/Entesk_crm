@@ -30,13 +30,12 @@ export const getDahsboardData = async (req, res) => {
         $lte: endOfMonth,
       };
     }
-    console.log(3);
+
     //  get confirmed and cancelled lessons
     const confirmedLessons = await Lesson.find({
       ...dateFilterObj,
       status: "confirmed",
     });
-    console.log(1);
 
     // get students count for sector
     const studentsCountAz = await Student.countDocuments({
