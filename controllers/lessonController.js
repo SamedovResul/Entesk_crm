@@ -33,21 +33,21 @@ export const createLesson = async (req, res) => {
 
 // ----------------------------------------------------------------------
 // Get lesson
-// export const getLesson = async (req, res) => {
-//   const { id } = req.params;
+export const getLesson = async (req, res) => {
+  const { id } = req.params;
 
-//   try {
-//     const lesson = await Lesson.findById(id);
+  try {
+    const lesson = await Lesson.findById(id);
 
-//     if (!lesson) {
-//       res.status(404).json({ message: "Lesson not found" });
-//     }
+    if (!lesson) {
+      res.status(404).json({ message: "Lesson not found" });
+    }
 
-//     res.status(200).json(lesson);
-//   } catch (err) {
-//     res.status(500).json({ message: { error: err.message } });
-//   }
-// };
+    res.status(200).json(lesson);
+  } catch (err) {
+    res.status(500).json({ message: { error: err.message } });
+  }
+};
 
 // Get lessons
 // export const getLessons = async (req, res) => {
@@ -240,17 +240,22 @@ export const updateLessonInMainPanel = async (req, res) => {
 
   try {
     if (role === "student") {
-      const updatedLesson = await Lesson.findById(id);
+      const updatedLesson = await Lesson.findOneAndUpdate(
+        { _id: id, "students.student": req.user.id },
+        { $set: { "students.$.attendance": req.body.students[0].attendance } },
+        { new: true }
+      ).populate("teacher course students.student");
 
-      // updatedLesson.students = updatedLesson.students.map((item) =>
-      //   item.student.toString() === req.user.id
-      //     ? { ...item, attendance: req.body.students[0].attendance }
-      //     : item
-      // );
+      const updatedLessonObj = updatedLesson.toObject();
 
-      // await updatedLesson.save();
+      const lessonOneStudents = {
+        ...updatedLessonObj,
+        students: updatedLessonObj.students.filter(
+          (item) => item.student._id == req.user.id
+        ),
+      };
 
-      return res.status(200).json(updatedLesson);
+      return res.status(200).json(lessonOneStudents);
     }
 
     const lesson = await Lesson.findById(id);

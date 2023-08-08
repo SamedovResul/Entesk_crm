@@ -4,6 +4,7 @@ import {
   createLesson,
   deleteLessonInMainPanel,
   deleteLessonInTablePanel,
+  getLesson,
   getWeeklyLessonsForCurrentTable,
   getWeeklyLessonsForMainPanel,
   getWeeklyLessonsForMainTable,
@@ -27,5 +28,7 @@ router.patch("/main/panel/:id", authMiddleware, updateLessonInMainPanel);
 router.patch("/table/:id", authMiddleware, updateLessonInTable);
 router.delete("/main/panel/:id", authMiddleware, deleteLessonInMainPanel);
 router.delete("/table/panel/:id", authMiddleware, deleteLessonInTablePanel);
+
+router.get("/test/:id", authMiddleware, getLesson);
 
 export default router;
