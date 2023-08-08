@@ -363,7 +363,7 @@ export const getUser = async (req, res) => {
 
   try {
     let user;
-    if (role === "admin" && role === "super-admin") {
+    if (role === "admin" || role === "super-admin") {
       user = await Admin.findById(id);
     } else if (role === "teacher") {
       user = await Teacher.findById(id);
