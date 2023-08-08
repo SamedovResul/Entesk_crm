@@ -23,9 +23,10 @@ export const getExpensesForPagination = async (req, res) => {
       };
     }
 
-    const expensesCount = await Expense.countDocuments();
+    const expensesCount = await Expense.countDocuments(filterObj);
 
     totalPages = Math.ceil(expensesCount / limit);
+
     expenses = await Expense.find(filterObj)
       .skip((page - 1) * limit)
       .limit(limit);
