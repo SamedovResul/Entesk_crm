@@ -166,7 +166,7 @@ export const getWeeklyLessonsForMainPanel = async (req, res) => {
     if (studentId || role === "student") {
       const filteredLessons = await Lesson.find(filterObj)
         .populate("teacher course students.student students.attendance")
-        .select("day date time role status note task createdDate");
+        .select("day date time role status note task createdDate students");
 
       lessons = filteredLessons.map((lesson) => {
         return {
@@ -240,17 +240,15 @@ export const updateLessonInMainPanel = async (req, res) => {
 
   try {
     if (role === "student") {
-      console.log("student=====", req.body.students[0].attendance);
-      console.log(req.user.id);
       const updatedLesson = await Lesson.findById(id);
 
-       updatedLesson.students = updatedLesson.students.map((item) =>
-        item.student.toString() === req.user.id
-          ? { ...item, attendance: req.body.students[0].attendance }
-          : item
-      );
+      // updatedLesson.students = updatedLesson.students.map((item) =>
+      //   item.student.toString() === req.user.id
+      //     ? { ...item, attendance: req.body.students[0].attendance }
+      //     : item
+      // );
 
-      await updatedLesson.save();
+      // await updatedLesson.save();
 
       return res.status(200).json(updatedLesson);
     }
