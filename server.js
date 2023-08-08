@@ -52,7 +52,6 @@ app.use("/api/user/profile", profileRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/demo", demoSmtpRoutes);
 app.use("/api/expense", expenseRoutes);
-app.use("/api/update-button", updateButtonRoutes);
 
 app.get("/", (req, res) => {
   res.send("salam");
