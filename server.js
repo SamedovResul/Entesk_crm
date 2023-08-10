@@ -15,7 +15,6 @@ import profileRoutes from "./routes/profileRoutes.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import demoSmtpRoutes from "./routes/demoSmtpRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
-import updateButtonRoutes from "./routes/updateButtonRoutes.js";
 import {
   createNotificationForBirthday,
   deleteNotificationsForBirthday,
